@@ -1,0 +1,10 @@
+*** Paynow Changelog ***
+
+2 July, 2014 - version 1.0
+ * First Release
+
+*** Paynow Changelog ***
+
+16 July, 2014 - version 1.0
+ * First Release
+-installable, notify url tested, payment info updating

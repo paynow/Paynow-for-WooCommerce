@@ -286,11 +286,11 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 				$msg = (new WC_Paynow_Helper)->ParseMsg($result);
 				
 				// first check status, take appropriate action
-				if ( strtolower($msg["status"]) == strtolower(ps_error) ){
+				if ( strtolower( $msg["status"] ) == strtolower( ps_error ) ){
 					wp_redirect($checkout_url);
 					exit;
 				}
-				elseif (strtolower($msg["status"]) == strtolower(ps_ok)){
+				elseif ( strtolower($msg["status"] ) == strtolower( ps_ok ) ){
 				
 					//second, check hash
 					$validateHash = (new WC_Paynow_Helper)->CreateHash($msg, $MerchantKey);
@@ -301,23 +301,23 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 						$theProcessUrl = $msg["browserurl"];
 
 						//update order data
-						$payment_meta = get_post_meta( $order_id, '_wc_paynow_payment_meta', true );
 						$payment_meta['BrowserUrl'] = $msg["browserurl"];
 						$payment_meta['PollUrl'] = $msg["pollurl"];
 						$payment_meta['PaynowReference'] = $msg["paynowreference"];
 						$payment_meta['Amount'] = $msg["amount"];
 						$payment_meta['Status'] = "Sent to Paynow";
+
+						// if the post meta does not exist, wp calls add_post_meta
 						update_post_meta( $order_id, '_wc_paynow_payment_meta', $payment_meta );
 						
 					}
 				} else {						
 					//unknown status
-					$error =  "Invalid status in from Paynow, cannot continue.";
+					$error =  "Invalid status in from Paynow, cannot continue lah ;).";
 				}
 			}
 			else
 			{
-				// I guess we can throw an error here
 			   $error = "Empty response from network request";
 			}
 			
@@ -387,7 +387,6 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 		$order = wc_get_order( $order_id );
 		
 		$payment_meta = get_post_meta( $order_id, '_wc_paynow_payment_meta', true );
-		// $order->update_meta_data();
 		
 		if($payment_meta)
 		{
@@ -410,34 +409,39 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 				$validateHash = (new WC_Paynow_Helper)->CreateHash($msg, $MerchantKey);
 				
 				if($validateHash != $msg["hash"]){
-
+					// hashes do not match 
+					// look at throwing clean errors
+					exit;
 				}
 				else
-				{				
-					$payment_meta = get_post_meta( $order_id, '_wc_paynow_payment_meta', true );
+				{
+
 					$payment_meta['PollUrl'] = $msg["pollurl"];
 					$payment_meta['PaynowReference'] = $msg["paynowreference"];
 					$payment_meta['Amount'] = $msg["amount"];
+					$payment_meta['Status'] = $msg["status"];
+
 					update_post_meta( $order_id, '_wc_paynow_payment_meta', $payment_meta );
 					
-					
-					if (trim(strtolower($msg["status"])) == ps_cancelled){
+					if ( trim(strtolower($msg["status"]) ) == ps_cancelled ){
 						$order->update_status( 'cancelled',  __('Payment cancelled on Paynow.', 'woothemes' ) );
 						$order->save();
 						return;
 					}
-					elseif (trim(strtolower($msg["status"])) == ps_failed){
+					elseif ( trim(strtolower($msg["status"] ) ) == ps_failed ){
 						$order->update_status( 'failed', __('Payment failed on Paynow.', 'woothemes' ) );
 						$order->save();
 						return;
 					}
-					elseif (trim(strtolower($msg["status"])) == ps_paid || trim(strtolower($msg["status"])) == ps_awaiting_delivery || trim(strtolower($msg["status"])) == ps_delivered){
-						$this->process_payment($order_id, "callback");
+					elseif ( trim( strtolower( $msg["status"]) ) == ps_paid || trim( strtolower( $msg["status"] ) ) == ps_awaiting_delivery || trim( strtolower( $msg["status"] ) ) == ps_delivered ){
+						$this->process_payment( $order_id, "callback" );
 						return;
 					}
 					else {
-						//keep current state
+						// keep current state (pending payment)
+						// unknown status
 					}
+
 				}
 			}
 		}

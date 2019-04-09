@@ -196,7 +196,8 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 
 	/**
 	 * Process the payment and return the result.
-	 *
+	 * @param int $order_id
+	 * @param string $from tells process payment whether the method call is from paynow return (callback) or not
 	 * @since 1.0.0
 	 */
 	function process_payment( $order_id, $from='' ) {
@@ -263,10 +264,11 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 				'amount' => $Amount,
 				'id' => $MerchantId,
 				'additionalinfo' => $AdditionalInfo,
-				'authemail' => $custEmail,
+				'authemail' => $custEmail, // customer email
 				'status' => $Status
 			);
 						
+			// should probably use static methods to have WC_Paynow_Helper::CreateMsg($a, $b);
 			$fields_string = (new WC_Paynow_Helper)->CreateMsg($values, $MerchantKey);
 
 			$url = $this->initiate_transaction_url;
@@ -370,8 +372,9 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 	
 	/**
 	 * Process notify from Paynow
+	 * Called from wc-api to process paynow's response
 	 *
-	 * @since 1.0.0
+	 * @since 1.2.0
 	 */
 	function paynow_checkout_return_handler()
 	{

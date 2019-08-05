@@ -15,3 +15,5 @@
 - removed unused code
 - removed all curl requests and replaced with wp_remote
 - Added multisite support
+1.2.1
+- fixed plugin not appearing on multisite if not network activated

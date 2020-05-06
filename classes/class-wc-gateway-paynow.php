@@ -30,7 +30,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 		$this->available_countries = array( 'ZW' );
 
 		// Setup available currency codes.
-		$this->available_currencies = array( 'USD' ); // nostro / rtgs ?
+		$this->available_currencies = array( 'USD', 'ZWL' ); // nostro / rtgs ?
 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -169,7 +169,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 
     	<?php
 				
-    	if ( 'USD' == get_option( 'woocommerce_currency' )) {
+    	if ( $this->is_valid_for_use() ) {
     		?><table class="form-table"><?php
 			// Generate the HTML For the settings form.
     		$this->generate_settings_html();

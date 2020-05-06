@@ -66,6 +66,25 @@ function woocommerce_paynow_init() {
 			require_once dirname( __FILE__ ) . '/classes/class-wc-gateway-paynow-helper.php';
 			require_once dirname( __FILE__ ) . '/includes/constants.php';
 
+			/**
+			 * Custom currency and currency symbol
+			 */
+			add_filter( 'woocommerce_currencies', 'add_zwl_currency' );
+
+			function add_zwl_currency( $currencies ) {
+				$currencies['ZWL'] = __( 'Zimbabwe', 'woocommerce' );
+				return $currencies;
+			}
+
+			add_filter('woocommerce_currency_symbol', 'add_zwl_currency_symbol', 10, 2);
+
+			function add_zwl_currency_symbol( $currency_symbol, $currency ) {
+				switch( $currency ) {
+					case 'ZWL': $currency_symbol = 'ZWL'; break;
+				}
+				return $currency_symbol;
+			}
+
 			add_filter('woocommerce_payment_gateways', array ($this, 'woocommerce_paynow_add_gateway' ) );
 		}
 

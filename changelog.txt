@@ -17,3 +17,7 @@
 - Added multisite support
 1.2.1
 - fixed plugin not appearing on multisite if not network activated
+
+7 May 2020
+1.3.0
+- Added multi currency support

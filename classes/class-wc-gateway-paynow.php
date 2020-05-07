@@ -436,7 +436,9 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 			{
 				$msg = (new WC_Paynow_Helper)->ParseMsg($result);
 
-				$MerchantKey =  $this->merchant_key;
+				$currency = get_woocommerce_currency();
+
+				$MerchantKey =  $currency == "ZWL" ? $this->merchant_key : $this->forex_merchant_key;
 				$validateHash = (new WC_Paynow_Helper)->CreateHash($msg, $MerchantKey);
 				
 				if($validateHash != $msg["hash"]){

@@ -159,7 +159,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 
 		$is_available = false;
 
-        $user_currency = get_option( 'woocommerce_currency' );
+        $user_currency = get_woocommerce_currency();
 
         $is_available_currency = in_array( $user_currency, $this->available_currencies );
 
@@ -185,7 +185,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 
     	<?php
 				
-    	if ( $this->is_valid_for_use() ) {
+    	if ( in_array( get_woocommerce_currency(), $this->available_currencies) ) {
     		?><table class="form-table"><?php
 			// Generate the HTML For the settings form.
     		$this->generate_settings_html();

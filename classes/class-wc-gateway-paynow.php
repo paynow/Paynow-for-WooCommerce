@@ -262,11 +262,11 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 			$return_url = $this->return_url = $this->get_return_url( $order );
 
 			// get currency
-			$user_currency = get_woocommerce_currency();
+			$order_currency = $order->get_currency();
 			
 			// Setup Paynow arguments
 
-			if ($user_currency == "USD") {
+			if ($order_currency == "USD") {
 				$MerchantId =       $this->forex_merchant_id;
 				$MerchantKey =    	$this->forex_merchant_key;
 			} else {
@@ -341,7 +341,9 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 						update_post_meta( $order_id, '_wc_paynow_payment_meta', $payment_meta );
 						
 					}
-				} else {						
+				} elseif( strtolower($msg["status"] ) == strtolower( ps_cancelled ) ){
+					wp_mail('adrian@webdevworld.com', 'WC Test', 'This is a cancelled test.');
+				}else {						
 					//unknown status
 					$error =  "Invalid status in from Paynow, cannot continue lah ;).";
 				}
@@ -436,7 +438,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 			{
 				$msg = (new WC_Paynow_Helper)->ParseMsg($result);
 
-				$currency = get_woocommerce_currency();
+				$currency = $order->get_currency();
 
 				$MerchantKey =  $currency == "ZWL" ? $this->merchant_key : $this->forex_merchant_key;
 				$validateHash = (new WC_Paynow_Helper)->CreateHash($msg, $MerchantKey);

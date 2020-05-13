@@ -86,7 +86,7 @@ function woocommerce_paynow_init() {
 			$meta = get_post_meta( $order_id, '_wc_paynow_payment_meta', true );
 			
 			if ( strtolower( $meta['Status'] ) == ps_cancelled ) {
-				wc_add_notice( __( 'You cancelled your payment on paynow.', 'woocommerce' ), 'error' );
+				wc_add_notice( __( 'You cancelled your payment on Paynow.', 'woocommerce' ), 'error' );
 				// wp_redirect( $order->get_cancel_order_url() );
 				wp_redirect( $order->get_checkout_payment_url() );
 			}

@@ -15,9 +15,14 @@
 - removed unused code
 - removed all curl requests and replaced with wp_remote
 - Added multisite support
+
 1.2.1
 - fixed plugin not appearing on multisite if not network activated
 
-7 May 2020
+13 May 2020
+1.2.2
+- fixed bug where a cancelled still redirected the customer to the order received page. it now redirects them to the order cancelled page.
+
+13 May 2020
 1.3.0
 - Added multi currency support

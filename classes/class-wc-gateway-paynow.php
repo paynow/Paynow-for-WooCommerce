@@ -216,24 +216,14 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 	 * @param string $from tells process payment whether the method call is from paynow return (callback) or not
 	 * @since 1.0.0
 	 */
-	function process_payment( $order_id, $from='' ) {
+	function process_payment( $order_id ) {
 
 		$order = wc_get_order( $order_id );
-		
-		if ( $from == "callback" ) {
-			$order->payment_complete();
-			return array(
-				'result' 	=> 'success',
-				'redirect'	=> $order->get_checkout_payment_url( true )
-			);
-		} else {
-			// redirects to paynow checkout page if not invoked by paynow response
-			return array(
-				'result' 	=> 'success',
-				'redirect'	=> $order->get_checkout_payment_url( true )
-			);
-		}
-		
+		return array(
+			'result' 	=> 'success',
+			'redirect'	=> $order->get_checkout_payment_url( true )
+		);
+
 	}
 
 	/**
@@ -459,8 +449,8 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 					update_post_meta( $order_id, '_wc_paynow_payment_meta', $payment_meta );
 					
 					if ( trim(strtolower($msg["status"]) ) == ps_cancelled ){
-						$order->update_status( 'cancelled',  __('Payment cancelled on Paynow.', 'woothemes' ) );
-						$order->save();
+						// $order->update_status( 'cancelled',  __('Payment cancelled on Paynow.', 'woothemes' ) );
+						// $order->save();
 						return;
 					}
 					elseif ( trim(strtolower($msg["status"] ) ) == ps_failed ){
@@ -469,7 +459,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 						return;
 					}
 					elseif ( trim( strtolower( $msg["status"]) ) == ps_paid || trim( strtolower( $msg["status"] ) ) == ps_awaiting_delivery || trim( strtolower( $msg["status"] ) ) == ps_delivered ){
-						$this->process_payment( $order_id, "callback" );
+						$order->payment_complete();
 						return;
 					}
 					else {

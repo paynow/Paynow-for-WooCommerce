@@ -67,6 +67,7 @@ function woocommerce_paynow_init() {
 			require_once dirname( __FILE__ ) . '/includes/constants.php';
 
 			add_filter('woocommerce_payment_gateways', array ($this, 'woocommerce_paynow_add_gateway' ) );
+			add_action( 'woocommerce_thankyou', array( $this, 'order_cancelled_redirect' ), 10 , 1);
 		}
 
 		/**
@@ -78,6 +79,18 @@ function woocommerce_paynow_init() {
 			$methods[] = 'WC_Gateway_Paynow';
 			return $methods;
 		} // End woocommerce_paynow_add_gateway()
+
+		function order_cancelled_redirect( $order_id ){
+			global $woocommerce;
+			$order = new WC_Order($order_id);
+			$meta = get_post_meta( $order_id, '_wc_paynow_payment_meta', true );
+			
+			if ( strtolower( $meta['Status'] ) == ps_cancelled ) {
+				wc_add_notice( __( 'You cancelled your payment on Paynow.', 'woocommerce' ), 'error' );
+				// wp_redirect( $order->get_cancel_order_url() );
+				wp_redirect( $order->get_checkout_payment_url() );
+			}
+		}
 
 	}
 

@@ -4,10 +4,11 @@
 	Plugin URI: http://www.paynow.co.zw/
 	Description: A payment gateway for Zimbabwean payment system, Paynow.
 	Author: Webdev
-	Version: 1.2.2
+
+	Version: 1.3.0
 	Author URI: http://www.paynow.co.zw/
 	Requires at least: 3.5
-	Tested up to: 3.9.1
+	Tested up to: 4.1
 */
 
 add_action( 'plugins_loaded', 'woocommerce_paynow_init' );
@@ -65,6 +66,25 @@ function woocommerce_paynow_init() {
 			require_once dirname( __FILE__ ) . '/classes/class-wc-gateway-paynow.php';
 			require_once dirname( __FILE__ ) . '/classes/class-wc-gateway-paynow-helper.php';
 			require_once dirname( __FILE__ ) . '/includes/constants.php';
+
+			/**
+			 * Custom currency and currency symbol
+			 */
+			add_filter( 'woocommerce_currencies', 'add_zwl_currency' );
+
+			function add_zwl_currency( $currencies ) {
+				$currencies['ZWL'] = __( 'Zimbabwe', 'woocommerce' );
+				return $currencies;
+			}
+
+			add_filter('woocommerce_currency_symbol', 'add_zwl_currency_symbol', 10, 2);
+
+			function add_zwl_currency_symbol( $currency_symbol, $currency ) {
+				switch( $currency ) {
+					case 'ZWL': $currency_symbol = 'ZWL'; break;
+				}
+				return $currency_symbol;
+			}
 
 			add_filter('woocommerce_payment_gateways', array ($this, 'woocommerce_paynow_add_gateway' ) );
 			add_action( 'woocommerce_thankyou', array( $this, 'order_cancelled_redirect' ), 10 , 1);

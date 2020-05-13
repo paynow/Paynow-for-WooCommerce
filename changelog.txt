@@ -22,3 +22,7 @@
 13 May 2020
 1.2.2
 - fixed bug where a cancelled still redirected the customer to the order received page. it now redirects them to the order cancelled page.
+
+13 May 2020
+1.3.0
+- Added multi currency support

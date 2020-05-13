@@ -30,7 +30,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 		$this->available_countries = array( 'ZW' );
 
 		// Setup available currency codes.
-		$this->available_currencies = array( 'USD' ); // nostro / rtgs ?
+		$this->available_currencies = array( 'USD', 'ZWL' ); // nostro / rtgs ?
 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -41,6 +41,10 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 		// Setup default merchant data.
 		$this->merchant_id = $this->settings['merchant_id'];
 		$this->merchant_key = $this->settings['merchant_key'];
+
+		$this->forex_merchant_id = $this->settings['forex_merchant_id'];
+		$this->forex_merchant_key = $this->settings['forex_merchant_key'];
+
 		$this->initiate_transaction_url = $this->settings['paynow_initiate_transaction_url'];
 
 
@@ -74,44 +78,56 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
     function init_form_fields () {
 
     	$this->form_fields = array(
-    						'enabled' => array(
-											'title' => __( 'Enable/Disable', 'woothemes' ),
-											'label' => __( 'Enable Paynow', 'woothemes' ),
-											'type' => 'checkbox',
-											'description' => __( 'This controls whether or not this gateway is enabled within WooCommerce.', 'woothemes' ),
-											'default' => 'yes'
-										),
-    						'title' => array(
-    										'title' => __( 'Title', 'woothemes' ),
-    										'type' => 'text',
-    										'description' => __( 'This controls the title which the user sees during checkout.', 'woothemes' ),
-    										'default' => __( 'Paynow', 'woothemes' )
-    									),
-							'description' => array(
-											'title' => __( 'Description', 'woothemes' ),
-											'type' => 'text',
-											'description' => __( 'This controls the description which the user sees during checkout.', 'woothemes' ),
-											'default' => ''
-										),
-							'merchant_id' => array(
-											'title' => __( 'Merchant ID', 'woothemes' ),
-											'type' => 'text',
-											'description' => __( 'This is the merchant ID, received from Paynow.', 'woothemes' ),
-											'default' => ''
-										),
-							'merchant_key' => array(
-											'title' => __( 'Merchant Key', 'woothemes' ),
-											'type' => 'text',
-											'description' => __( 'This is the merchant key, received from Paynow.', 'woothemes' ),
-											'default' => ''
-										),
-							'paynow_initiate_transaction_url' => array(
-											'title' => __( 'Paynow Initiate Transaction URL', 'woothemes' ),
-											'type' => 'text',
-											'label' => __( 'Paynow Initiate Transaction URL.', 'woothemes' ),
-											'default' => 'https://www.paynow.co.zw/Interface/InitiateTransaction'
-										)
-							);
+		'enabled' => array(
+			'title' => __( 'Enable/Disable', 'woothemes' ),
+			'label' => __( 'Enable Paynow', 'woothemes' ),
+			'type' => 'checkbox',
+			'description' => __( 'This controls whether or not this gateway is enabled within WooCommerce.', 'woothemes' ),
+			'default' => 'yes'
+		),
+		'title' => array(
+			'title' => __( 'Title', 'woothemes' ),
+			'type' => 'text',
+			'description' => __( 'This controls the title which the user sees during checkout.', 'woothemes' ),
+			'default' => __( 'Paynow', 'woothemes' )
+		),
+		'description' => array(
+			'title' => __( 'Description', 'woothemes' ),
+			'type' => 'text',
+			'description' => __( 'This controls the description which the user sees during checkout.', 'woothemes' ),
+			'default' => ''
+		),
+		'merchant_id' => array(
+			'title' => __( 'Merchant ID (local)', 'woothemes' ),
+			'type' => 'text',
+			'description' => __( 'This is the merchant ID, received from Paynow.', 'woothemes' ),
+			'default' => ''
+		),
+		'merchant_key' => array(
+			'title' => __( 'Merchant Key (local)', 'woothemes' ),
+			'type' => 'text',
+			'description' => __( 'This is the merchant key, received from Paynow.', 'woothemes' ),
+			'default' => ''
+		),
+		'forex_merchant_id' => array(
+			'title' => __( 'Merchant ID (USD)', 'woothemes' ),
+			'type' => 'text',
+			'description' => __( 'This is the merchant ID, received from Paynow.', 'woothemes' ),
+			'default' => ''
+		),
+		'forex_merchant_key' => array(
+			'title' => __( 'Merchant Key (USD)', 'woothemes' ),
+			'type' => 'text',
+			'description' => __( 'This is the merchant key, received from Paynow.', 'woothemes' ),
+			'default' => ''
+		),
+		'paynow_initiate_transaction_url' => array(
+				'title' => __( 'Paynow Initiate Transaction URL', 'woothemes' ),
+				'type' => 'text',
+				'label' => __( 'Paynow Initiate Transaction URL.', 'woothemes' ),
+				'default' => 'https://www.paynow.co.zw/Interface/InitiateTransaction'
+			)
+		);
 
     } // End init_form_fields()
 
@@ -143,7 +159,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 
 		$is_available = false;
 
-        $user_currency = get_option( 'woocommerce_currency' );
+        $user_currency = get_woocommerce_currency();
 
         $is_available_currency = in_array( $user_currency, $this->available_currencies );
 
@@ -160,8 +176,8 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 	 * @since 1.0.0
 	 */
 	public function admin_options() {
-		$this->log( '' );
-		$this->log( '', true );
+		// $this->log( '' );
+		// $this->log( '', true );
 
     	?>
     	<h3><?php _e( 'Paynow', 'woothemes' ); ?></h3>
@@ -169,7 +185,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 
     	<?php
 				
-    	if ( 'USD' == get_option( 'woocommerce_currency' )) {
+    	if ( in_array( get_woocommerce_currency(), $this->available_currencies) ) {
     		?><table class="form-table"><?php
 			// Generate the HTML For the settings form.
     		$this->generate_settings_html();
@@ -235,9 +251,21 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 			// Get the return url
 			$return_url = $this->return_url = $this->get_return_url( $order );
 
+			// get currency
+			$order_currency = $order->get_currency();
+			
 			// Setup Paynow arguments
-			$MerchantId =       $this->merchant_id;
-			$MerchantKey =    	$this->merchant_key;
+
+			if ($order_currency == "USD") {
+				$MerchantId =       $this->forex_merchant_id;
+				$MerchantKey =    	$this->forex_merchant_key;
+			} else {
+				$MerchantId =       $this->merchant_id;
+				$MerchantKey =    	$this->merchant_key;
+			}
+
+			// $this->log('Merchant ID:' . $MerchantId);
+
 			$ConfirmUrl =       $listener_url;
 			$ReturnUrl =        $return_url;
 			$Reference =        "Order Number: " . $order->get_order_number();
@@ -303,7 +331,9 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 						update_post_meta( $order_id, '_wc_paynow_payment_meta', $payment_meta );
 						
 					}
-				} else {						
+				} elseif( strtolower($msg["status"] ) == strtolower( ps_cancelled ) ){
+					wp_mail('adrian@webdevworld.com', 'WC Test', 'This is a cancelled test.');
+				}else {						
 					//unknown status
 					$error =  "Invalid status in from Paynow, cannot continue lah ;).";
 				}
@@ -347,7 +377,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
             if( !$fh ) {
                 $pathinfo = pathinfo( __FILE__ );
                 $dir = str_replace( '/classes', '/logs', $pathinfo['dirname'] );
-                $fh = @fopen( $dir .'/paynow.log', 'w' );
+                $fh = @fopen( $dir .'/paynow.log', 'a+' );
             }
 
             // If file was successfully created
@@ -398,7 +428,9 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 			{
 				$msg = (new WC_Paynow_Helper)->ParseMsg($result);
 
-				$MerchantKey =  $this->merchant_key;
+				$currency = $order->get_currency();
+
+				$MerchantKey =  $currency == "ZWL" ? $this->merchant_key : $this->forex_merchant_key;
 				$validateHash = (new WC_Paynow_Helper)->CreateHash($msg, $MerchantKey);
 				
 				if($validateHash != $msg["hash"]){
@@ -442,5 +474,5 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 
 	}// End wc_paynow_process_paynow_notify()
 	
-	
+
 } // End Class

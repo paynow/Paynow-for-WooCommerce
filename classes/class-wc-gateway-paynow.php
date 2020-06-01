@@ -161,9 +161,22 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 
         $user_currency = get_woocommerce_currency();
 
-        $is_available_currency = in_array( $user_currency, $this->available_currencies );
+		$is_available_currency = in_array( $user_currency, $this->available_currencies );
+		
+		$authSet = false;
 
-		if ( $is_available_currency && $this->enabled == 'yes' && $this->settings['merchant_id'] != '' && $this->settings['merchant_key'] != '' && $this->settings['paynow_initiate_transaction_url'] != '' )
+		if ($user_currency == 'ZWL') {
+			$authSet = $this->settings['merchant_id'] != '' && $this->settings['merchant_key'] != '';
+		} elseif($user_currency == 'USD') {
+			$authSet = $this->settings['forex_merchant_id'] != '' && $this->settings['forex_merchant_key'] != '';
+		}
+
+		if ( 
+			$is_available_currency 
+			&& $this->enabled == 'yes' 
+			&& $authSet
+			&& $this->settings['paynow_initiate_transaction_url'] != '' 
+		)
 			$is_available = true;
 
         return $is_available;

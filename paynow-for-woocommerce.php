@@ -5,7 +5,7 @@
 	Description: A payment gateway for Zimbabwean payment system, Paynow.
 	Author: Webdev
 
-	Version: 1.3.0
+	Version: 1.3.1
 	Author URI: http://www.paynow.co.zw/
 	Requires at least: 3.5
 	Tested up to: 4.1

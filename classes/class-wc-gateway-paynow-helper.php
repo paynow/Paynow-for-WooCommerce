@@ -13,7 +13,7 @@ class WC_Paynow_Helper {
 	 * @param string $msg The PayNow message string.
 	 * @return array An associative array representing the parsed message.
 	 */
-	public function parseMsg( $msg) {
+	public function parseMsg( $msg ) {
 		// Convert to array data
 		$parts = explode('&', $msg);
 		$result = array();
@@ -32,7 +32,7 @@ class WC_Paynow_Helper {
 	 * @param array $fields An associative array of data to be URL-encoded.
 	 * @return string A URL-encoded string.
 	 */
-	public function urlIfy( $fields) {
+	public function urlIfy( $fields ) {
 		// URL-ify the data for the POST
 		$delim = '';
 		$fields_string = '';
@@ -52,7 +52,7 @@ class WC_Paynow_Helper {
 	 * @param string $MerchantKey The PayNow Merchant Key.
 	 * @return string The generated hash.
 	 */
-	public function createHash( $values, $MerchantKey) {
+	public function createHash( $values, $MerchantKey ) {
 		$string = '';
 
 		foreach ($values as $key => $value) {
@@ -74,7 +74,7 @@ class WC_Paynow_Helper {
 	 * @param string $MerchantKey The PayNow Merchant Key.
 	 * @return string A URL-encoded PayNow message string.
 	 */
-	public function createMsg( $values, $MerchantKey) {
+	public function createMsg( $values, $MerchantKey ) {
 		$fields = array();
 
 		foreach ($values as $key => $value) {

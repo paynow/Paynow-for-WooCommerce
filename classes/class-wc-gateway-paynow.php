@@ -6,8 +6,8 @@
  * Provides a Paynow Payment Gateway.
  *
  * @todo - Improve the naming of variables where possible
- * @class 		wc_gateway_paynow
- * @package		WooCommerce
+ * @class wc_gateway_paynow
+ * @package	WooCommerce
  * Author: Webdev
  *
  */
@@ -19,20 +19,20 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 
 	public function __construct() {
 		global $woocommerce;
-		$this->id			= 'paynow';
+		$this->id = 'paynow';
 		$this->method_title = __('Paynow', 'woothemes');
 		$this->method_description = 'Have your customers pay using Zimbabwean payment methods.';
-		$this->icon 		= $this->plugin_url() . '/assets/images/icon.png';
-		$this->has_fields 	= true;
+		$this->icon = $this->plugin_url() . '/assets/images/icon.png';
+		$this->has_fields = true;
 
 		// this is the name of the class. Mainly used in the callback to trigger wc-api handler in this class
-		$this->callback		=  strtolower(get_class($this));
+		$this->callback	=  strtolower(get_class($this));
 
 		// Setup available countries.
-		$this->available_countries = array('ZW');
+		$this->available_countries = array( 'ZW' );
 
 		// Setup available currency codes.
-		$this->available_currencies = array('USD', 'ZWL'); // nostro / rtgs ?
+		$this->available_currencies = array( 'USD', 'ZWL' ); // nostro / rtgs ?
 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -53,19 +53,19 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 		$this->title = $this->settings['title'];
 
 		// this is the url paynow will send it's response to
-		$this->response_url	= add_query_arg('wc-api', $this->callback, home_url('/'));
+		$this->response_url = add_query_arg('wc-api', $this->callback, home_url('/'));
 
 		// register a handler for wc-api calls to this payment method
-		add_action('woocommerce_api_' . $this->callback, array(&$this, 'paynow_checkout_return_handler'));
+		add_action('woocommerce_api_' . $this->callback, array( $this, 'paynow_checkout_return_handler' ));
 
 		/* 1.6.6 */
-		add_action('woocommerce_update_options_payment_gateways', array($this, 'process_admin_options'));
+		add_action('woocommerce_update_options_payment_gateways', array( $this, 'process_admin_options' ));
 
 		/* 2.0.0 */
-		add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
+		add_action('woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ));
 
 
-		add_action('woocommerce_receipt_paynow', array($this, 'receipt_page'));
+		add_action('woocommerce_receipt_paynow', array( $this, 'receipt_page' ));
 
 		// Check if the base currency supports this gateway.
 		if (!$this->is_valid_for_use()) {
@@ -86,50 +86,50 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 				'label' => __('Enable Paynow', 'woothemes'),
 				'type' => 'checkbox',
 				'description' => __('This controls whether or not this gateway is enabled within WooCommerce.', 'woothemes'),
-				'default' => 'yes'
+				'default' => 'yes',
 			),
 			'title' => array(
 				'title' => __('Title', 'woothemes'),
 				'type' => 'text',
 				'description' => __('This controls the title which the user sees during checkout.', 'woothemes'),
-				'default' => __('Paynow', 'woothemes')
+				'default' => __('Paynow', 'woothemes'),
 			),
 			'description' => array(
 				'title' => __('Description', 'woothemes'),
 				'type' => 'text',
 				'description' => __('This controls the description which the user sees during checkout.', 'woothemes'),
-				'default' => ''
+				'default' => '',
 			),
 			'merchant_id' => array(
 				'title' => __('Merchant ID (local)', 'woothemes'),
 				'type' => 'text',
 				'description' => __('This is the merchant ID, received from Paynow.', 'woothemes'),
-				'default' => ''
+				'default' => '',
 			),
 			'merchant_key' => array(
 				'title' => __('Merchant Key (local)', 'woothemes'),
 				'type' => 'text',
 				'description' => __('This is the merchant key, received from Paynow.', 'woothemes'),
-				'default' => ''
+				'default' => '',
 			),
 			'forex_merchant_id' => array(
 				'title' => __('Merchant ID (USD)', 'woothemes'),
 				'type' => 'text',
 				'description' => __('This is the merchant ID, received from Paynow.', 'woothemes'),
-				'default' => ''
+				'default' => '',
 			),
 			'forex_merchant_key' => array(
 				'title' => __('Merchant Key (USD)', 'woothemes'),
 				'type' => 'text',
 				'description' => __('This is the merchant key, received from Paynow.', 'woothemes'),
-				'default' => ''
+				'default' => '',
 			),
 			'paynow_initiate_transaction_url' => array(
 				'title' => __('Paynow Initiate Transaction URL', 'woothemes'),
 				'type' => 'text',
 				'label' => __('Paynow Initiate Transaction URL.', 'woothemes'),
-				'default' => 'https://www.paynow.co.zw/Interface/InitiateTransaction'
-			)
+				'default' => 'https://www.paynow.co.zw/Interface/InitiateTransaction',
+			),
 		);
 	} // End init_form_fields()
 
@@ -144,11 +144,11 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 		}
 
 		if (is_ssl()) {
-			$this->plugin_url = str_replace('http://', 'https://', WP_PLUGIN_URL) . '/' . plugin_basename(dirname(dirname(__FILE__)));
+			$this->plugin_url = str_replace('http://', 'https://', WP_PLUGIN_URL) . '/' . plugin_basename(dirname(dirname(__DIR__)));
 
 			return $this->plugin_url;
 		} else {
-			$this->plugin_url = WP_PLUGIN_URL . '/' . plugin_basename(dirname(dirname(__FILE__)));
+			$this->plugin_url = WP_PLUGIN_URL . '/' . plugin_basename(dirname(dirname(__DIR__)));
 			return $this->plugin_url;
 		}
 	} // End plugin_url()
@@ -224,7 +224,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 			?>
 			<div class="inline error">
 			<?php /* translators: %s: Disabled Gateway */ ?>
-				<p><strong><?php esc_html_e('Gateway Disabled', 'woothemes'); ?></strong> <?php echo sprintf(esc_html_e('Choose United States Dollar ($/USD) as your store currency in <a href="%s">Pricing Options</a> to enable the Paynow Gateway.', 'woocommerce'), esc_html_e(admin_url('?page=woocommerce&tab=catalog'))); ?></p>
+				<p><strong><?php esc_html_e('Gateway Disabled', 'woothemes'); ?></strong> <?php sprintf(esc_html_e('Choose United States Dollar ($/USD) as your store currency in <a href="%s">Pricing Options</a> to enable the Paynow Gateway.', 'woocommerce'), esc_html_e(admin_url('?page=woocommerce&tab=catalog'))); ?></p>
 			</div>
 		<?php
 		} // End check currency
@@ -250,12 +250,12 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 	 * @param string $from tells process payment whether the method call is from paynow return (callback) or not
 	 * @since 1.0.0
 	 */
-	public function process_payment( $order_id) {
+	public function process_payment( $order_id ) {
 
 		$order = wc_get_order($order_id);
 		return array(
-			'result' 	=> 'success',
-			'redirect'	=> $order->get_checkout_payment_url(true)
+			'result' => 'success',
+			'redirect' => $order->get_checkout_payment_url(true),
 		);
 	}
 
@@ -266,7 +266,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 	 *
 	 * @since 1.0.0
 	 */
-	public function receipt_page( $order_id) {
+	public function receipt_page( $order_id ) {
 		global $woocommerce;
 
 		//get current order
@@ -291,22 +291,22 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 			// Setup Paynow arguments
 
 			if ('USD' == $order_currency) {
-				$MerchantId =       $this->forex_merchant_id;
-				$MerchantKey =    	$this->forex_merchant_key;
+				$MerchantId = $this->forex_merchant_id;
+				$MerchantKey = $this->forex_merchant_key;
 			} else {
-				$MerchantId =       $this->merchant_id;
-				$MerchantKey =    	$this->merchant_key;
+				$MerchantId = $this->merchant_id;
+				$MerchantKey = $this->merchant_key;
 			}
 
 			// $this->log('Merchant ID:' . $MerchantId);
 
-			$ConfirmUrl =       $listener_url;
-			$ReturnUrl =        $return_url;
-			$Reference =        'Order Number: ' . $order->get_order_number();
-			$Amount =           $order->get_total();
-			$AdditionalInfo =   '';
-			$Status =           'Message';
-			$custEmail = 		$order->billing_email;
+			$ConfirmUrl =  $listener_url;
+			$ReturnUrl = $return_url;
+			$Reference = 'Order Number: ' . $order->get_order_number();
+			$Amount = $order->get_total();
+			$AdditionalInfo = '';
+			$Status = 'Message';
+			$custEmail = $order->get_billing_email();
 
 			//set POST variables
 			$values = array(
@@ -317,7 +317,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 				'id' => $MerchantId,
 				'additionalinfo' => $AdditionalInfo,
 				'authemail' => $custEmail, // customer email
-				'status' => $Status
+				'status' => $Status,
 			);
 
 			// should probably use static methods to have WC_Paynow_Helper::CreateMsg($a, $b);
@@ -325,12 +325,13 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 
 			$url = $this->initiate_transaction_url;
 
-			// send API post request
-			$response = wp_remote_request($url, [
+			$response_fields = array(
 				'timeout' => 45,
 				'method' => 'POST',
-				'body' => $fields_string
-			]);
+				'body' => $fields_string,
+			);
+			// send API post request
+			$response = wp_remote_request($url, $response_fields);
 
 			// get the response from paynow
 			$result = $response['body'];
@@ -390,7 +391,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 	 * @since 1.0.0
 	 */
 
-	public function log( $message, $close = false) {
+	public function log( $message, $close = false ) {
 
 		static $fh = 0;
 
@@ -437,12 +438,13 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 		if ($payment_meta) {
 			$url = $payment_meta['PollUrl'];
 
-			//execute post
-			$response = wp_remote_request($url, [
+			$request_fields = array(
 				'timeout' => 45,
 				'method' => 'POST',
-				'body' => ''
-			]);
+				'body' => '',
+			);
+			//execute post
+			$response = wp_remote_request($url, $request_fields);
 
 			$result = $response['body'];
 
@@ -483,6 +485,4 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 			}
 		}
 	} // End wc_paynow_process_paynow_notify()
-
-
 } // End Class

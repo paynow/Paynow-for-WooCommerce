@@ -73,9 +73,9 @@ return;
 		}
 
 		public function init() {
-			include_once dirname(__FILE__) . '/classes/class-wc-gateway-paynow.php';
-			include_once dirname(__FILE__) . '/classes/class-wc-gateway-paynow-helper.php';
-			include_once dirname(__FILE__) . '/includes/constants.php';
+			include_once dirname(__DIR__) . '/classes/class-wc-gateway-paynow.php';
+			include_once dirname(__DIR__) . '/classes/class-wc-gateway-paynow-helper.php';
+			include_once dirname(__DIR__) . '/includes/constants.php';
 
 			/**
 			 * Custom currency and currency symbol
@@ -98,7 +98,7 @@ return;
 				return $currency_symbol;
 			}
 
-			add_filter('woocommerce_payment_gateways', array ($this, 'woocommerce_paynow_add_gateway' ));
+			add_filter('woocommerce_payment_gateways', array( $this, 'woocommerce_paynow_add_gateway' ));
 			add_action('woocommerce_thankyou', array( $this, 'order_cancelled_redirect' ), 10, 1);
 		}
 
@@ -123,9 +123,7 @@ return;
 				wp_redirect($order->get_checkout_payment_url());
 			}
 		}
-
 	}
 
 	WC_Paynow::get_instance();
-	
 } // End woocommerce_paynow_init()

@@ -39,7 +39,7 @@ class WC_Paynow_Helper {
 
 		foreach ($fields as $key => $value) {
 			$fields_string .= $delim . $key . '=' . $value;
-			$delim = '';
+			$delim = '&';
 		}
 
 		return $fields_string;

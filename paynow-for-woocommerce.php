@@ -73,9 +73,9 @@ return;
 		}
 
 		public function init() {
-			include_once dirname(__DIR__) . '/classes/class-wc-gateway-paynow.php';
-			include_once dirname(__DIR__) . '/classes/class-wc-gateway-paynow-helper.php';
-			include_once dirname(__DIR__) . '/includes/constants.php';
+			include_once __DIR__ . '/classes/class-wc-gateway-paynow.php';
+			include_once __DIR__ . '/classes/class-wc-gateway-paynow-helper.php';
+			include_once __DIR__ . '/includes/constants.php';
 
 			/**
 			 * Custom currency and currency symbol

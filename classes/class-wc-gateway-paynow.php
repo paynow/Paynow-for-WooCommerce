@@ -26,7 +26,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway {
 		$this->has_fields = true;
 
 		// this is the name of the class. Mainly used in the callback to trigger wc-api handler in this class
-		$this->callback	= strtolower(get_class($this));
+		$this->callback = strtolower(get_class($this));
 
 		// Setup available countries.
 		$this->available_countries = array( 'ZW' );

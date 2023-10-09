@@ -653,48 +653,12 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 			</div>
 			<div class="wd-loader-wrapper">
 				<div class="wd-loader-content">
-					<div class="loader"></div>
+					<div class="paynow-express-loader"></div>
 					<p style="text-align: center;">Processing payment. Please wait...</p>
 				</div>
 			</div>
 			<style>
-				.wd-loader-wrapper {
-					position: fixed;
-					width: 100vw;
-					height: 100vh;
-					background: rgba(255, 255, 255, .85);
-					z-index: 999999;
-					top: 0;
-					left: 0;
-					display: flex;
-					flex-direction: column;
-					justify-content: center;
-					align-items: center;
-					text-align: center;
-				}
-
-				.wd-loader-wrapper .loader {
-					border: 16px solid #f3f3f3;
-					/* Light grey */
-					border-top: 16px solid #3498db;
-					/* Blue */
-					border-radius: 50%;
-					width: 120px;
-					height: 120px;
-					animation: spin 2s linear infinite;
-					margin: 0 auto;
-					margin-bottom: 2rem;
-				}
-
-				@keyframes spin {
-					0% {
-						transform: rotate(0deg);
-					}
-
-					100% {
-						transform: rotate(360deg);
-					}
-				}
+				
 			</style>
 
 		<?php

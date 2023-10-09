@@ -96,7 +96,7 @@ class WC_Paynow_Helper {
 		} elseif (preg_match('/^(71|071)/', $phoneNumber)) {
 			return 'onemoney';
 		} else {
-			return 'ecocash';
+			return 'unknown';
 		}
 	}
 }

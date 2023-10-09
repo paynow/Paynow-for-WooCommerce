@@ -372,10 +372,16 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				$errors->add('paynow_payment_method', __('Please select paynow payment channel', 'woocommerce'));
 			}
 			if (!empty($_POST['paynow_payment_method'])) {
+
 				if ('paynow' != $_POST['paynow_payment_method']) {
 					if (empty($_POST['ecocash_mobile_number'])) {
 
 						$errors->add('ecocash_mobile_number', __('Please enter payment phone No.', 'woocommerce'));
+					} else {
+						$method =  (new WC_Paynow_Helper())->checkNetwork($_POST['ecocash_mobile_number']);
+						if ('unknown' == $method) {
+							$errors->add('ecocash_mobile_number', __('Please enter a valid phone number', 'woocommerce'));
+						}
 					}
 				}
 			}

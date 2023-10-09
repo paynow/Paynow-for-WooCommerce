@@ -44,6 +44,10 @@
     flex-wrap: wrap;
     padding-left: 15px;
 }
+#ecocash_mobile_number_field
+{
+    margin-bottom: 5px;
+}
 .paynow-badges
 {
     margin-left: 20px;

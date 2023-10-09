@@ -1,0 +1,69 @@
+.paynow-d-flex label
+{
+    margin-right:18px;
+    margin-left:5px;
+    font-size:16px !important;
+    position: relative;
+    top:-3px;
+}
+.paynow-d-flex input[type='radio']{
+    height: 16px;
+    width: 16px;
+}
+#paynow_custom_checkout_field input[type='tel'] {
+    width: 64%;
+    font-size: 0.833em;
+    padding: 14px 15px;
+    border: 0;
+    background-color: #eee;
+    color: #666;
+    border-radius: 3px;
+    box-sizing: border-box;
+    margin: 0;
+    outline: 0;
+    line-height: normal;
+}
+.woocommerce-checkout .checkout.woocommerce-checkout #customer_details .col-1 .woocommerce-billing-fields__field-wrapper .form-row input
+{
+    background-color: #eee  !important;
+}
+
+#paynow_custom_checkout_field .required
+{
+    color: red;
+    font-weight: 700;
+    border: 0!important;
+    text-decoration: none;
+    visibility: visible;
+}
+.paynow-d-flex
+{
+    display: flex;
+    justify-content: space-between;
+    max-width: 64%;
+    flex-wrap: wrap;
+    padding-left: 15px;
+}
+.paynow-badges
+{
+    margin-left: 20px;
+}
+#paynow_custom_checkout_field .paynow-badge
+{
+    max-width: 60px;
+}
+@media (max-width:569px)
+{
+    .paynow-d-flex
+    {
+        max-width: 100%;
+        flex-direction: column;
+    }
+    #paynow_custom_checkout_field input[type='tel'] {
+        width: 100%;
+    }
+    
+    .paynow-d-flex div {
+        margin-top: 15px;
+    }
+}

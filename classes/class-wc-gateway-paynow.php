@@ -51,6 +51,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 		$this->initiate_transaction_url = $this->settings['paynow_initiate_transaction_url'];
 
+		$this->initiate_remote_transaction_url= $this->settings['paynow_remote_transaction_url'];
 
 		$this->title = $this->settings['title'];
 
@@ -489,7 +490,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 			$fields_string = (new WC_Paynow_Helper())->CreateMsg($values, $MerchantKey);
 
 
-			$url = 'paynow' == $paynow_payment_method ? $this->initiate_transaction_url : PAYNOW_INITIATE_REMOTE;
+			$url = 'paynow' == $paynow_payment_method ? $this->initiate_transaction_url : $this->initiate_remote_transaction_url;
 
 			$response_fields = array(
 				'timeout' => 45,

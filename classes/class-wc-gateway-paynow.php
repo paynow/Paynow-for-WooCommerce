@@ -51,7 +51,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 		$this->initiate_transaction_url = $this->settings['paynow_initiate_transaction_url'];
 
-		$this->initiate_remote_transaction_url= $this->settings['paynow_remote_transaction_url'];
+		$this->initiate_remote_transaction_url = $this->settings['paynow_remote_transaction_url'];
 
 		$this->title = $this->settings['title'];
 
@@ -413,10 +413,12 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 			exit;
 		} else {
 			$payment_info = get_post_meta($order_id, '_wc_paynow_payment_meta', true);
-
+		
 			if ($payment_info != '') {
+				$method = $payment_info['method'];
 				// Payment has already been initiated, no need to process again
-				return;
+				$this->paynow_express_checkout($order, $payment_info, $method,'');
+				exit;
 			}
 
 			$paynow_payment_method =  $order->get_meta('_paynow_payment_method');
@@ -520,6 +522,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 						$payment_meta['PollUrl'] = $msg['pollurl'];
 						$payment_meta['PaynowReference'] = $msg['paynowreference'];
 						$payment_meta['Status'] = 'Sent to Paynow';
+						$payment_meta['method'] = $paynow_payment_method;
 						if ('paynow' == $paynow_payment_method) {
 
 
@@ -531,7 +534,13 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 							$payment_meta['PaynowReference'] = $msg['paynowreference'];
 							$payment_meta['Amount'] = $msg['amount'];
 							$payment_meta['Status'] = 'Sent to Paynow';
+							
 						}
+						//Add innbucks information if available
+						if (array_key_exists("authorizationcode", $msg)) {
+							$payment_meta['authorizationexpires'] =  $msg['authorizationexpires'];
+							$payment_meta["authorizationcode"] =  $msg["authorizationcode"];
+						} 
 
 						// if the post meta does not exist, wp calls add_post_meta
 						update_post_meta($order_id, '_wc_paynow_payment_meta', $payment_meta);
@@ -549,7 +558,6 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 			//Choose where to go
 			if (isset($error)) {
 				wc_add_notice(__($error, 'woocommerce'), 'error');
-
 				wp_redirect($checkout_url);
 				exit;
 			} else {
@@ -658,7 +666,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				</div>
 			</div>
 			<style>
-				
+
 			</style>
 
 		<?php

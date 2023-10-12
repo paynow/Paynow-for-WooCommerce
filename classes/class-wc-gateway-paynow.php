@@ -296,7 +296,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 						<div class="paynow_ecocash_onemoney_method">
 							<input type="radio" class="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio" value="ecocash_onemoney" name="paynow_payment_method" id="paynow_payment_method_ecocash_onemoney">
-							<label for="paynow_payment_method_ecocash_onemoney" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline"> Mobile Money
+							<label for="paynow_payment_method_ecocash_onemoney" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline"> Mobile Money Express
 								<br />
 								<img class="paynow-badges paynow-badge" src="<?php echo $this->plugin_url() . '/assets/images/ecocash-badge.svg' ?>" alt="Ecocash Badge">
 								<img class="paynow-badge" src="<?php echo $this->plugin_url() . '/assets/images/onemoney-badge.svg' ?>" alt="One Money Badge">
@@ -310,7 +310,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 						?>
 							<div class="paynow_innbucks">
 								<input type="radio" class="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio" value="innbucks" name="paynow_payment_method" id="paynow_payment_method_innbucks">
-								<label for="paynow_payment_method_innbucks" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline">Innbucks
+								<label for="paynow_payment_method_innbucks" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline">Innbucks Express
 									<br />
 									<img class="paynow-badges paynow-badge" src="<?php echo $this->plugin_url() . '/assets/images/Innbucks_Badge.svg' ?>" alt="Innbucks Badge">
 
@@ -321,16 +321,9 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 						<div class="paynow_paynow">
 
 							<input type="radio" class="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio" value="paynow" name="paynow_payment_method" id="paynow_payment_method_paynow">
-							<label for="paynow_payment_method_paynow" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline">Paynow(Debit Cards, Internet banking, Zimswitch)</label>
-							<br>
-							<img class="paynow-badges paynow-badge" src="<?php echo $this->plugin_url() . '/assets/images/visa-badge.svg' ?>" alt="Ecocash Badge">
-							<img class="paynow-badge" src="<?php echo $this->plugin_url() . '/assets/images/mastercard-badge.svg' ?>" alt="Zimswitch Badge">
-
-							<img class="paynow-badge" src="<?php echo $this->plugin_url() . '/assets/images/zimswitch-badge.svg' ?>" alt="Zimswitch Badge">
-							<img class="paynow-badge" src="<?php echo $this->plugin_url() . '/assets/images/internet-banking.svg' ?>" alt="Zimswitch Badge">
-							<img class="paynow-badge" src="<?php echo $this->plugin_url() . '/assets/images/POS2U.svg' ?>" alt="POS2U Badge">
-							<img class="paynow-badge" src="<?php echo $this->plugin_url() . '/assets/images/payGo.svg' ?>" alt="Paygo Badge">
-
+							<label for="paynow_payment_method_paynow" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline">Paynow<span style="font-size:13px"> (All supported payment channells)</span>
+								<br>
+								<img class="" style="margin-left:28px; max-width:210px" src="<?php echo $this->plugin_url() . '/assets/images/paynow-badge.png' ?>" alt="Ecocash Badge"></label>
 
 						</div>
 					</div>
@@ -341,6 +334,12 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				<label for="ecocash_mobile_number" class="woocommerce-form__label" style="display: block;">Payment Mobile No&nbsp;<abbr class="required" title="required">*</abbr></label>
 				<span class="woocommerce-input-wrapper">
 					<input type="tel" class="input-text" name="ecocash_mobile_number" id="ecocash_mobile_number" placeholder="" value="" required="required" fdprocessedid="98usig">
+				</span>
+			</p>
+			<p class="validate-required" id="paynow_email" data-priority="">
+				<label for="paynow_auth_email" class="woocommerce-form__label" style="display: block;">Paynow Email&nbsp;<abbr class="required" title="required">*</abbr></label>
+				<span class="woocommerce-input-wrapper">
+					<input type="email" class="input-text" name="paynow_auth_email" id="paynow_auth_email" placeholder="" value="" required="required" fdprocessedid="98usig">
 				</span>
 			</p>
 
@@ -359,6 +358,9 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		if (!empty($_POST['ecocash_mobile_number'])) {
 			$order->update_meta_data('_ecocash_mobile_number', sanitize_text_field($_POST['ecocash_mobile_number']));
 		}
+		if (!empty($_POST['paynow_auth_email'])) {
+			$order->update_meta_data('_paynow_auth_email', sanitize_text_field($_POST['paynow_auth_email']));
+		}
 	}
 
 	/**
@@ -367,24 +369,33 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 	public function validate_payment_fields($data, $errors)
 	{
-		if ('paynow' == $_POST['payment_method']) {
-			if (empty($_POST['paynow_payment_method'])) {
 
-				$errors->add('paynow_payment_method', __('Please select paynow payment channel', 'woocommerce'));
-			}
-			if (!empty($_POST['paynow_payment_method'])) {
+		if (empty($_POST['paynow_payment_method'])) {
 
-				if ('paynow' != $_POST['paynow_payment_method']) {
-					if (empty($_POST['ecocash_mobile_number'])) {
+			$errors->add('paynow_payment_method', __('Please select paynow payment channel', 'woocommerce'));
+			return;
+		}
 
-						$errors->add('ecocash_mobile_number', __('Please enter payment phone No.', 'woocommerce'));
-					} else {
-						$method =  (new WC_Paynow_Helper())->checkNetwork($_POST['ecocash_mobile_number']);
-						if ('unknown' == $method) {
-							$errors->add('ecocash_mobile_number', __('Please enter a valid phone number', 'woocommerce'));
-						}
-					}
+
+		if ('paynow' != $_POST['paynow_payment_method']) {
+			if (empty($_POST['ecocash_mobile_number'])) {
+
+				$errors->add('ecocash_mobile_number', __('Please enter payment phone No.', 'woocommerce'));
+			} else {
+				$method =  (new WC_Paynow_Helper())->checkNetwork($_POST['ecocash_mobile_number']);
+				if ('unknown' == $method) {
+					$errors->add('ecocash_mobile_number', __('Please enter a valid phone number', 'woocommerce'));
 				}
+			}
+		} else {
+			if (empty($_POST['paynow_auth_email'])) {
+
+				$errors->add('paynow_auth_email', __('Please enter paynow email address', 'woocommerce'));
+				return;
+			}
+			if (!is_email($_POST['paynow_auth_email'])) {
+
+				$errors->add('paynow_auth_email', __('Please enter a valid paynow email address', 'woocommerce'));
 			}
 		}
 	}
@@ -413,11 +424,11 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 			exit;
 		} else {
 			$payment_info = get_post_meta($order_id, '_wc_paynow_payment_meta', true);
-		
+
 			if ($payment_info != '') {
 				$method = $payment_info['method'];
 				// Payment has already been initiated, no need to process again
-				$this->paynow_express_checkout($order, $payment_info, $method,'');
+				$this->paynow_express_checkout($order, $payment_info, $method, '');
 				exit;
 			}
 
@@ -461,6 +472,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 			}
 
 			if ('paynow' == $paynow_payment_method) {
+				$custEmail = !empty($order->get_meta('_paynow_auth_email')) ? $order->get_meta('_paynow_auth_email') : $order->get_billing_email();
 				//set POST variables
 				$values = array(
 					'resulturl' => $ConfirmUrl,
@@ -534,13 +546,12 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 							$payment_meta['PaynowReference'] = $msg['paynowreference'];
 							$payment_meta['Amount'] = $msg['amount'];
 							$payment_meta['Status'] = 'Sent to Paynow';
-							
 						}
 						//Add innbucks information if available
 						if (array_key_exists("authorizationcode", $msg)) {
 							$payment_meta['authorizationexpires'] =  $msg['authorizationexpires'];
 							$payment_meta["authorizationcode"] =  $msg["authorizationcode"];
-						} 
+						}
 
 						// if the post meta does not exist, wp calls add_post_meta
 						update_post_meta($order_id, '_wc_paynow_payment_meta', $payment_meta);
@@ -654,15 +665,24 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		?>
 
 
-			<div class="woocommerce-notices-wrapper">
-				<ul class="woocommerce-info" role="alert">
-					<li>Processing payment. Please check your phone.</li>
-				</ul>
-			</div>
 			<div class="wd-loader-wrapper">
+
+
+
 				<div class="wd-loader-content">
 					<div class="paynow-express-loader"></div>
-					<p style="text-align: center;">Processing payment. Please wait...</p>
+					<p style="text-align: center; color: #2d3040; font-family: Arial, sans-serif; font-size: 18px">Waiting for mobile money payment. Please check your phone </p>
+					<div style="font-size: 16px; font-weight: normal; margin-top: 50px;">
+						<div class="dial-number">
+							If you don't get a prompt on your handset
+							<div style="margin-bottom: 3em;">
+								<div class="bubble instruction">dial</div>
+								<div class="bubble code">*151*2*4#</div>
+							</div>
+						</div>
+
+					</div>
+
 				</div>
 			</div>
 			<style>

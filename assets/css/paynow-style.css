@@ -1,17 +1,19 @@
-.paynow-d-flex label
-{
-    margin-right:18px;
-    margin-left:5px;
-    font-size:16px !important;
+.paynow-d-flex label {
+    margin-right: 23px;
+    margin-left: 5px;
+    font-size: 16px !important;
     position: relative;
-    top:-3px;
+    top: -3px;
 }
-.paynow-d-flex input[type='radio']{
+
+.paynow-d-flex input[type='radio'] {
     height: 16px;
     width: 16px;
 }
-#paynow_custom_checkout_field input[type='tel'] {
-    width: 64%;
+
+#paynow_custom_checkout_field input[type='tel'],
+#paynow_custom_checkout_field input[type='email'] {
+    width: 70%;
     font-size: 0.833em;
     padding: 14px 15px;
     border: 0;
@@ -23,37 +25,36 @@
     outline: 0;
     line-height: normal;
 }
-.woocommerce-checkout .checkout.woocommerce-checkout #customer_details .col-1 .woocommerce-billing-fields__field-wrapper .form-row input
-{
-    background-color: #eee  !important;
+
+.woocommerce-checkout .checkout.woocommerce-checkout #customer_details .col-1 .woocommerce-billing-fields__field-wrapper .form-row input {
+    background-color: #eee !important;
 }
 
-#paynow_custom_checkout_field .required
-{
+#paynow_custom_checkout_field .required {
     color: red;
     font-weight: 700;
-    border: 0!important;
+    border: 0 !important;
     text-decoration: none;
     visibility: visible;
 }
-.paynow-d-flex
-{
+
+.paynow-d-flex {
     display: flex;
     justify-content: space-between;
-    max-width: 64%;
+    max-width: 75%;
     flex-wrap: wrap;
     padding-left: 15px;
 }
-#ecocash_mobile_number_field
-{
+
+#ecocash_mobile_number_field {
     margin-bottom: 5px;
 }
-.paynow-badges
-{
+
+.paynow-badges {
     margin-left: 20px;
 }
-#paynow_custom_checkout_field .paynow-badge
-{
+
+#paynow_custom_checkout_field .paynow-badge {
     max-width: 60px;
 }
 
@@ -139,6 +140,11 @@ div.code {
     width: 80%;
 }
 
+#paynow_email {
+    display: none;
+    margin-bottom: 15px;
+}
+
 @media (max-width:639px) {
     .innbucks_container {
         top: 0%;
@@ -149,6 +155,7 @@ div.code {
     }
 
 }
+
 .wd-loader-wrapper {
     position: fixed;
     width: 100vw;
@@ -164,7 +171,7 @@ div.code {
     text-align: center;
 }
 
-.wd-loader-wrapper .paynow-express-loader{
+.wd-loader-wrapper .paynow-express-loader {
     border: 16px solid #f3f3f3;
     /* Light grey */
     border-top: 16px solid #3498db;
@@ -187,17 +194,26 @@ div.code {
     }
 }
 
-@media (max-width:569px)
-{
-    .paynow-d-flex
-    {
+@media (max-width:569px) {
+    .paynow-d-flex {
         max-width: 100%;
         flex-direction: column;
     }
-    #paynow_custom_checkout_field input[type='tel'] {
+
+    #paynow_custom_checkout_field .paynow-badge {
+        max-width: 40px;
+
+    }
+
+    #paynow_custom_checkout_field .paynow-badges {
+        margin-left: 25px;
+    }
+
+    #paynow_custom_checkout_field input[type='tel'],
+    #paynow_custom_checkout_field input[type='email'] {
         width: 100%;
     }
-    
+
     .paynow-d-flex div {
         margin-top: 15px;
     }

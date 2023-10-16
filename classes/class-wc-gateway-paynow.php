@@ -289,7 +289,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	?>
 		<div id="paynow_custom_checkout_field" class="paynow_express_payment_mobile">
 			<h3>Payment Channels</h3>
-			<small>Please how you want to pay.</small>
+			<small>Please select how you want to pay.</small>
 			<p class="form-row form-row-wide custom-radio-group paynow_payment_method" id="paynow_payment_method_field" data-priority="">
 				<span class="woocommerce-input-wrapper">
 					<div class="paynow-d-flex">

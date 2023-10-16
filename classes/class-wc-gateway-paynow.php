@@ -321,7 +321,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 						<div class="paynow_paynow">
 
 							<input type="radio" class="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio" value="paynow" name="paynow_payment_method" id="paynow_payment_method_paynow">
-							<label for="paynow_payment_method_paynow" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline">Paynow<span style="font-size:13px"> (All supported payment channells)</span>
+							<label for="paynow_payment_method_paynow" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline">Paynow<span style="font-size:13px"> (All supported payment channels)</span>
 								<br>
 								<img class="" style="margin-left:28px; max-width:210px" src="<?php echo $this->plugin_url() . '/assets/images/paynow-badge.png' ?>" alt="Ecocash Badge"></label>
 

@@ -369,7 +369,8 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 	public function validate_payment_fields($data, $errors)
 	{
-
+		$chosen_payment_method = WC()->session->get('chosen_payment_method');
+		if ($chosen_payment_method === 'paynow') {
 		if (empty($_POST['paynow_payment_method'])) {
 
 			$errors->add('paynow_payment_method', __('Please select paynow payment channel', 'woocommerce'));
@@ -398,6 +399,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				$errors->add('paynow_auth_email', __('Please enter a valid paynow email address', 'woocommerce'));
 			}
 		}
+	}
 	}
 	/**
 	 * Add Payment fields for Paynow

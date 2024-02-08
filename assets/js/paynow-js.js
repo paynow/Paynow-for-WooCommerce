@@ -31,4 +31,27 @@ document.addEventListener('DOMContentLoaded', function () {
         // Copy the value from billingEmailInput to paynowAuthEmailInput
         paynowAuthEmailInput.value = billingEmailInput.value;
     });
+    
+
+
+    (function ($) {
+        'use strict';
+    
+        $(document).ready(function () {
+            updatedPaymentGateway();
+            $('form.checkout').on('change', 'input[name="payment_method"]', function () {    
+                updatedPaymentGateway();
+            });
+        });
+    
+        function updatedPaymentGateway() {
+            const current = $('form[name="checkout"] input[name="payment_method"]:checked').val();
+    
+            if (current == 'paynow') {
+                $("#paynow_custom_checkout_field").show()
+            }else{
+                $("#paynow_custom_checkout_field").hide()
+            }
+        }
+    })(jQuery);
 });

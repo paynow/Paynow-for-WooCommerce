@@ -1,4 +1,4 @@
-# Paynow for WooCommerce 
+# Paynow Payment Gateway 
 
 A payment gateway for Paynow. A Paynow merchant account, merchant key and merchant ID are required for this gateway to function.
 

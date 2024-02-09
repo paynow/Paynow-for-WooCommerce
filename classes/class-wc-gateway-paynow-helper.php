@@ -86,4 +86,17 @@ class WC_Paynow_Helper {
 
 		return $fields_string;
 	}
+	public function checkNetwork($phoneNumber) {
+		// Remove any non-digit characters from the phone number
+		$phoneNumber = preg_replace('/\D/', '', $phoneNumber);
+	
+		// Perform network detection based on the phone number format
+		if (preg_match('/^(078|77|077)/', $phoneNumber)) {
+			return 'ecocash';
+		} elseif (preg_match('/^(71|071)/', $phoneNumber)) {
+			return 'onemoney';
+		} else {
+			return 'unknown';
+		}
+	}
 }

@@ -40,3 +40,4 @@ if (!defined('PS_DELIVERED')) {
 if (!defined('PS_AWAITING_REDIRECT')) {
 	define('PS_AWAITING_REDIRECT', 'awaiting redirect');
 }
+

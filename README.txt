@@ -12,5 +12,4 @@
  *
  * WC requires at least: 2.2
  * WC tested up to: 2.3
- *
  */

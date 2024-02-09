@@ -1,5 +1,5 @@
 /**
- * Plugin Name: Paynow
+ * Plugin Name: Paynow Payment Gateway
  * Plugin URI: http://woocommerce.com/products/paynow/
  * Description: A payment gateway for Paynow.
  * Version: 1.3.2

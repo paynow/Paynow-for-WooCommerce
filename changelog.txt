@@ -1,28 +1,22 @@
-*** Paynow Changelog ***
+*** Paynow Changelog***
 
-2 July, 2014 - version 1.0
- * First Release
+2023-09-30 - version 1.3.1
+* fixed Code formating to match  woocommerce and Wordpress standards
 
-*** Paynow Changelog ***
+2020-05-14 - version 1.3.0
+* Added multi currency support
 
-16 July, 2014 - version 1.0
- * First Release
--installable, notify url tested, payment info updating
+2020-05-14 - version 1.2.2
+* fixed bug where a cancelled still redirected the customer to the order received page. it now redirects them to the order cancelled page.
 
-28 March 2019
-1.2.0
-- restructured the plugin to align it with woocommerce standards and OOP
-- removed unused code
-- removed all curl requests and replaced with wp_remote
-- Added multisite support
+2020-05-13 - version 1.2.1
+* fixed plugin not appearing on multisite if not network activated
 
-1.2.1
-- fixed plugin not appearing on multisite if not network activated
+2019-03-28 - version 1.2.0
+* restructured the plugin to align it with woocommerce standards and OOP
+* removed unused code
+* removed all curl requests and replaced with wp_remote
+* Added multisite support
 
-13 May 2020
-1.2.2
-- fixed bug where a cancelled still redirected the customer to the order received page. it now redirects them to the order cancelled page.
-
-13 May 2020
-1.3.0
-- Added multi currency support
+2014-07-02 - version 1.0
+*Inital Release

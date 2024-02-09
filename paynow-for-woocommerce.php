@@ -1,12 +1,12 @@
 <?php
 /*
 	Plugin Name: Paynow Zimbabwe Payment Gateway
-	Plugin URI: http://www.paynow.co.zw/
+	Plugin URI: https://developers.paynow.co.zw/docs/woocommerce.html
 	Description: A payment gateway for Zimbabwean payment system, Paynow for Woocommerce.
 	Author: Webdev
 
 	Version: 1.3.2
-	Author URI: http://www.paynow.co.zw/
+	Author URI: https://www.paynow.co.zw/
 	Requires at least: 3.5
 	Tested up to: 4.1
 */

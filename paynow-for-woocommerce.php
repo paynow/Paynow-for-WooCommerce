@@ -86,21 +86,21 @@ function woocommerce_paynow_init()
 			/**
 			 * Custom currency and currency symbol
 			 */
-			add_filter('woocommerce_currencies', 'add_zwl_currency');
+			add_filter('woocommerce_currencies', 'add_zig_currency');
 
-			function add_zwl_currency($currencies)
+			function add_zig_currency($currencies)
 			{
-				$currencies['ZWL'] = __('Zimbabwe', 'woocommerce');
+				$currencies['ZiG'] = __('Zimbabwe', 'woocommerce');
 				return $currencies;
 			}
 
-			add_filter('woocommerce_currency_symbol', 'add_zwl_currency_symbol', 10, 2);
+			add_filter('woocommerce_currency_symbol', 'add_zig_currency_symbol', 10, 2);
 
-			function add_zwl_currency_symbol($currency_symbol, $currency)
+			function add_zig_currency_symbol($currency_symbol, $currency)
 			{
 				switch ($currency) {
-					case 'ZWL':
-						$currency_symbol = 'ZWL';
+					case 'ZiG':
+						$currency_symbol = 'ZiG';
 						break;
 				}
 				return $currency_symbol;

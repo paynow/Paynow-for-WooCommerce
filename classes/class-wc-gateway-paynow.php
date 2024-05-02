@@ -173,7 +173,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				'permission_callback' => '__return_true',
 			));
 		});
-	}
+	
 	}
 
 	/**

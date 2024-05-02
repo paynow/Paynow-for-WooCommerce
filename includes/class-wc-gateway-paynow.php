@@ -152,7 +152,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		$this->response_url = add_query_arg('wc-api', $this->callback, home_url('/'));
 
 		// register a handler for wc-api calls to this payment method
-		add_action('woocommerce_api_callback', array($this, 'paynow_checkout_return_handler'));
+		add_action('woocommerce_api_'.$this->callback, array($this, 'paynow_checkout_return_handler'));
 
 		/* 1.6.6 */
 		add_action('woocommerce_update_options_payment_gateways', array($this, 'process_admin_options'));

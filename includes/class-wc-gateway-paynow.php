@@ -152,7 +152,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		$this->response_url = add_query_arg('wc-api', $this->callback, home_url('/'));
 
 		// register a handler for wc-api calls to this payment method
-		add_action('woocommerce_api_' . $this->callback, array($this, 'paynow_checkout_return_handler'));
+		add_action('woocommerce_api_callback', array($this, 'paynow_checkout_return_handler'));
 
 		/* 1.6.6 */
 		add_action('woocommerce_update_options_payment_gateways', array($this, 'process_admin_options'));
@@ -876,7 +876,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 		// Check the request method is POST
 		if (isset($_SERVER['REQUEST_METHOD']) && 'POST' != $_SERVER['REQUEST_METHOD']  && !isset($_GET['order_id'])) {
-			return;
+			return WP_REST_Response(["message"=> "Unauthorized"], 401);
 		}
 
 		$order_id = sanitize_text_field($_GET['order_id']);
@@ -909,7 +909,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				if ($validateHash != $msg['hash']) {
 					// hashes do not match 
 					// look at throwing clean errors
-					exit;
+					return WP_REST_Response(["message"=> "Invalid Hash"], 401);
 				} else {
 
 					$payment_meta['PollUrl'] = $msg['pollurl'];
@@ -922,14 +922,14 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 					if (trim(strtolower($msg['status'])) == PS_CANCELLED) {
 						$order->update_status('cancelled',  __('Payment cancelled on Paynow.', 'woothemes'));
 						$order->save();
-						return;
+						return WP_REST_Response(["message"=> "Saved Succesfully"], 200);
 					} elseif (trim(strtolower($msg['status'])) == PS_FAILED) {
 						$order->update_status('failed', __('Payment failed on Paynow.', 'woothemes'));
 						$order->save();
-						return;
+						return WP_REST_Response(["message"=> "Saved Succesfully"], 200);
 					} elseif (trim(strtolower($msg['status'])) == PS_PAID || trim(strtolower($msg['status'])) == PS_AWAITING_DELIVERY || trim(strtolower($msg['status'])) == PS_DELIVERED) {
 						$order->payment_complete();
-						return;
+						return WP_REST_Response(["message"=> "Saved Succesfully"], 200);
 					}
 				}
 			}

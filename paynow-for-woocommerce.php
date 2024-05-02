@@ -108,14 +108,7 @@ function woocommerce_paynow_init()
 
 			add_filter('woocommerce_payment_gateways', array($this, 'woocommerce_paynow_add_gateway'));
 			add_action('woocommerce_thankyou', array($this, 'order_cancelled_redirect'), 10, 1);
-			add_action('rest_api_init', function () {
-				register_rest_route('wc-paynow-express/v1', '/order/(?P<id>\d+)', array(
-					'methods' => 'POST',
-					'callback' => array(new WC_Gateway_Paynow(), 'wc_express_check_status'),
-					'permission_callback' => '__return_true',
-				));
-			});
-		}
+		
 
 		/**
 		 * Add the gateway to WooCommerce

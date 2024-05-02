@@ -165,6 +165,15 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		if (!$this->is_valid_for_use()) {
 			$this->enabled = false;
 		}
+
+		add_action('rest_api_init', function () {
+			register_rest_route('wc-paynow-express/v1', '/order/(?P<id>\d+)', array(
+				'methods' => 'POST',
+				'callback' => array($this, 'wc_express_check_status'),
+				'permission_callback' => '__return_true',
+			));
+		});
+	}
 	}
 
 	/**

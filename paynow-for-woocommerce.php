@@ -87,8 +87,8 @@ function woocommerce_paynow_init()
 
 		public function init()
 		{
-			include_once __DIR__ . '/classes/class-wc-gateway-paynow.php';
-			include_once __DIR__ . '/classes/class-wc-gateway-paynow-helper.php';
+			include_once __DIR__ . '/includes/class-wc-gateway-paynow.php';
+			include_once __DIR__ . '/includes/class-wc-gateway-paynow-helper.php';
 			include_once __DIR__ . '/includes/constants.php';
 
 			/**

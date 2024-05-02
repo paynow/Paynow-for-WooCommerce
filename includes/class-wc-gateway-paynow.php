@@ -17,92 +17,101 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 
 	public $version = WC_PAYNOW_VERSION;
-	
 
 
-    public $id;
 
-    /**
-     * The title of the payment method shown in the admin settings.
-     */
-    public $method_title;
+	public $id;
 
-    /**
-     * Description of the payment method shown in the admin settings.
-     */
-    public $method_description;
+	/**
+	 * The title of the payment method shown in the admin settings.
+	 */
+	public $method_title;
 
-    /**
-     * URL to the icon to be used for this payment method in the checkout page.
-     */
-    public $icon;
+	/**
+	 * Description of the payment method shown in the admin settings.
+	 */
+	public $method_description;
 
-    /**
-     * Indicates if the payment gateway has fields on the checkout page.
-     */
-    public $has_fields;
+	/**
+	 * URL to the icon to be used for this payment method in the checkout page.
+	 */
+	public $icon;
 
-    /**
-     * Callback URL used for the payment gateway.
-     */
-    public $callback;
+	/**
+	 * Indicates if the payment gateway has fields on the checkout page.
+	 */
+	public $has_fields;
 
-    /**
-     * Supported countries.
-     */
-    public $available_countries;
+	/**
+	 * Callback URL used for the payment gateway.
+	 */
+	public $callback;
 
-    /**
-     * Supported currencies.
-     */
-    public $available_currencies;
+	/**
+	 * Supported countries.
+	 */
+	public $available_countries;
 
-    /**
-     * Merchant ID for transactions.
-     */
-    public $merchant_id;
+	/**
+	 * Supported currencies.
+	 */
+	public $available_currencies;
 
-    /**
-     * Merchant key for transactions.
-     */
-    public $merchant_key;
+	/**
+	 * Merchant ID for transactions.
+	 */
+	public $merchant_id;
 
-    /**
-     * Forex Merchant ID for foreign currency transactions.
-     */
-    public $forex_merchant_id;
+	/**
+	 * Merchant key for transactions.
+	 */
+	public $merchant_key;
 
-    /**
-     * Forex Merchant Key for foreign currency transactions.
-     */
-    public $forex_merchant_key;
+	/**
+	 * Forex Merchant ID for foreign currency transactions.
+	 */
+	public $forex_merchant_id;
 
-    /**
-     * URL to initiate a transaction.
-     */
-    public $initiate_transaction_url;
+	/**
+	 * Forex Merchant Key for foreign currency transactions.
+	 */
+	public $forex_merchant_key;
 
-    /**
-     * URL to initiate a remote transaction.
-     */
-    public $initiate_remote_transaction_url;
+	/**
+	 * URL to initiate a transaction.
+	 */
+	public $initiate_transaction_url;
 
-    /**
-     * The title of the payment method shown on the checkout page.
-     */
-    public $title;
+	/**
+	 * URL to initiate a remote transaction.
+	 */
+	public $initiate_remote_transaction_url;
 
-    /**
-     * URL where Paynow will send its response to.
-     */
-    public $response_url;
+	/**
+	 * The title of the payment method shown on the checkout page.
+	 */
+	public $title;
 
- /**
-     * URL where Paynow will send its response to.
-     */
-    public $plugin_url;
+	/**
+	 * URL where Paynow will send its response to.
+	 */
+	public $response_url;
 
-	public function __construct()
+	/**
+	 * URL where Paynow will send its response to.
+	 */
+	public $plugin_url;
+
+	public function __construct($inital = true)
+	{
+		
+		if ($inital)
+		{
+			$this->inital_setup();
+		}
+	}
+
+	public function inital_setup()
 	{
 		global $woocommerce;
 		$this->id = 'paynow';
@@ -160,20 +169,13 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		add_action('wp_enqueue_scripts',  array($this, 'paynow_enqueue_script'));
 
 		add_action('woocommerce_receipt_paynow', array($this, 'receipt_page'));
+		
 		wp_enqueue_style('paynow-style');
 		// Check if the base currency supports this gateway.
 		if (!$this->is_valid_for_use()) {
 			$this->enabled = false;
 		}
 
-		add_action('rest_api_init', function () {
-			register_rest_route('wc-paynow-express/v1', '/order/(?P<id>\d+)', array(
-				'methods' => 'POST',
-				'callback' => array($this, 'wc_express_check_status'),
-				'permission_callback' => '__return_true',
-			));
-		});
-	
 	}
 
 	/**
@@ -464,35 +466,35 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	{
 		$chosen_payment_method = WC()->session->get('chosen_payment_method');
 		if ($chosen_payment_method === 'paynow') {
-		if (empty($_POST['paynow_payment_method'])) {
+			if (empty($_POST['paynow_payment_method'])) {
 
-			$errors->add('paynow_payment_method', __('Please select paynow payment channel', 'woocommerce'));
-			return;
-		}
-
-
-		if ('paynow' != $_POST['paynow_payment_method']) {
-			if (empty($_POST['ecocash_mobile_number'])) {
-
-				$errors->add('ecocash_mobile_number', __('Please enter payment phone No.', 'woocommerce'));
-			} else {
-				$method =  (new WC_Paynow_Helper())->checkNetwork($_POST['ecocash_mobile_number']);
-				if ('unknown' == $method) {
-					$errors->add('ecocash_mobile_number', __('Please enter a valid phone number', 'woocommerce'));
-				}
-			}
-		} else {
-			if (empty($_POST['paynow_auth_email'])) {
-
-				$errors->add('paynow_auth_email', __('Please enter paynow email address', 'woocommerce'));
+				$errors->add('paynow_payment_method', __('Please select paynow payment channel', 'woocommerce'));
 				return;
 			}
-			if (!is_email($_POST['paynow_auth_email'])) {
 
-				$errors->add('paynow_auth_email', __('Please enter a valid paynow email address', 'woocommerce'));
+
+			if ('paynow' != $_POST['paynow_payment_method']) {
+				if (empty($_POST['ecocash_mobile_number'])) {
+
+					$errors->add('ecocash_mobile_number', __('Please enter payment phone No.', 'woocommerce'));
+				} else {
+					$method =  (new WC_Paynow_Helper())->checkNetwork($_POST['ecocash_mobile_number']);
+					if ('unknown' == $method) {
+						$errors->add('ecocash_mobile_number', __('Please enter a valid phone number', 'woocommerce'));
+					}
+				}
+			} else {
+				if (empty($_POST['paynow_auth_email'])) {
+
+					$errors->add('paynow_auth_email', __('Please enter paynow email address', 'woocommerce'));
+					return;
+				}
+				if (!is_email($_POST['paynow_auth_email'])) {
+
+					$errors->add('paynow_auth_email', __('Please enter a valid paynow email address', 'woocommerce'));
+				}
 			}
 		}
-	}
 	}
 	/**
 	 * Add Payment fields for Paynow
@@ -936,7 +938,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 
 
-	function wc_express_check_status(WP_REST_Request $request)
+	public  function wc_express_check_status(WP_REST_Request $request)
 	{
 
 		$data = [];
@@ -1007,6 +1009,6 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 	public function paynow_enqueue_script()
 	{
-		wp_enqueue_script('my-js',  $this->plugin_url() . '/assets/js/paynow-js.js', array('jquery'),$this->version, true);
+		wp_enqueue_script('my-js',  $this->plugin_url() . '/assets/js/paynow-js.js', array('jquery'), $this->version, true);
 	}
 } // End Class

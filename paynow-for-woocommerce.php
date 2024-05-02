@@ -109,7 +109,7 @@ function woocommerce_paynow_init()
 			add_filter('woocommerce_payment_gateways', array($this, 'woocommerce_paynow_add_gateway'));
 			add_action('woocommerce_thankyou', array($this, 'order_cancelled_redirect'), 10, 1);
 		
-
+		}
 		/**
 		 * Add the gateway to WooCommerce
 		 *

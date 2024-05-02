@@ -43,14 +43,14 @@ final class WC_Gateway_Paynow_Blocks_Support extends AbstractPaymentMethodType {
 	 */
 	public function get_payment_method_script_handles() {
 		$script_path       = '/src/index.js';
-		$script_asset_path = WC_Paynow_Gateway::plugin_abspath() . 'build/index.asset.php';
+		$script_asset_path = WC_Paynow::plugin_abspath() . 'build/index.asset.php';
 		$script_asset      = file_exists( $script_asset_path )
 			? require( $script_asset_path )
 			: array(
 				'dependencies' => array(),
 				'version'      => '1.2.0'
 			);
-		$script_url        = WC_Paynow_Gateway::plugin_url() . $script_path;
+		$script_url        = WC_Paynow::plugin_url() . $script_path;
 
 		wp_register_script(
 			'wc-paynow-payments-blocks',

@@ -146,6 +146,17 @@ function woocommerce_paynow_init()
 			return untrailingslashit(plugins_url('/', __FILE__));
 		}
 
+			/**
+		 * Plugin url.
+		 *
+		 * @return string
+		 */
+		public static function plugin_abspath()
+		{
+			return trailingslashit(plugin_dir_path(__FILE__));
+		}
+
+
 		/**
 		 * Register Woocommerce Blocks Support
 		 */

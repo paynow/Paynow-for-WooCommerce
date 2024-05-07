@@ -44,18 +44,3 @@ const Paynow = {
 };
 
 registerPaymentMethod( Paynow );
-
-// Aliased import
-
-// Global import
-// const { registerCheckoutBlock } = wc.blocksCheckout;
-
-const options = {
-	metadata: {
-		name: 'namespace/paynow-payment-fields',
-		parent: [ 'woocommerce/checkout-totals-block' ],
-	},
-	component: () => <div>A Function Component</div>,
-};
-
-registerCheckoutBlock( options );

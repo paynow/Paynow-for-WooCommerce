@@ -10,72 +10,64 @@ const PaynowPaymentFields = (props) => {
     const [showEcocashMobileNumber, setShowEcocashMobileNumber] = useState(false);
     const [showPaynowEmail, setShowPaynowEmail] = useState(true);
     const { eventRegistration, emitResponse } = props;
-	const { onPaymentProcessing } = eventRegistration;
+    const { onPaymentProcessing } = eventRegistration;
     useEffect(() => {
         const settings = getSetting('paynow_data', {});
         const currency = settings.currency; // assuming currency is stored in paynow_data settings
         setPluginUrl(settings.plugin_url)
         setCurrency(currency);
-        const unsubscribe = onPaymentProcessing( async () => {
-		
-			const myGatewayCustomData = '12345';
-			const customDataIsValid = !! myGatewayCustomData.length;
+        const unsubscribe = onPaymentProcessing(async () => {
 
-            if (!PaynowPaymentMethod.length)
-                {
-                    return {
-                        type: emitResponse.responseTypes.ERROR,
-                        message: 'Please select a Paynow Payment channel',
-                    };
-                }
+        
 
-            if (PaynowPaymentMethod == "paynow" && PaynowAuthEmail.length < 1)
-                {
-                    return {
-                        type: emitResponse.responseTypes.ERROR,
-                        message: 'Please fill in Paynow Email Address ',
-                    };
-                }
-            if (PaynowPaymentMethod != "paynow" && PaynowPaymentMobileNumber.length < 1)
-                {
-                    return {
-                        type: emitResponse.responseTypes.ERROR,
-                        message: 'Please fill in Paynow Mobile Number ',
-                    };
-                }
-			if ( customDataIsValid ) {
-				return {
-					type: emitResponse.responseTypes.SUCCESS,
-					meta: {
-						paymentMethodData: {
-							myGatewayCustomData,
+            if (!PaynowPaymentMethod.length) {
+                return {
+                    type: emitResponse.responseTypes.ERROR,
+                    message: 'Please select a Paynow Payment channel',
+                };
+            }
+
+            if (PaynowPaymentMethod == "paynow" && PaynowAuthEmail.length < 1) {
+                return {
+                    type: emitResponse.responseTypes.ERROR,
+                    message: 'Please fill in Paynow Email Address ',
+                };
+            }
+            if (PaynowPaymentMethod != "paynow" && PaynowPaymentMobileNumber.length < 1) {
+                return {
+                    type: emitResponse.responseTypes.ERROR,
+                    message: 'Please fill in Paynow Mobile Number ',
+                };
+            }
+        
+                return {
+                    type: emitResponse.responseTypes.SUCCESS,
+                    meta: {
+                        paymentMethodData: {
                             PaynowPaymentMethod,
                             PaynowAuthEmail,
                             PaynowPaymentMobileNumber
 
-						},
-					},
-				};
-			}
+                        },
+                    },
+                };
+            
 
-			return {
-				type: emitResponse.responseTypes.ERROR,
-				message: 'There was an error',
-			};
-		} );
+          
+        });
         return () => {
-			unsubscribe();
-		};
+            unsubscribe();
+        };
     }, [
         PaynowPaymentMethod,
-        PaynowAuthEmail, 
+        PaynowAuthEmail,
         PaynowPaymentMobileNumber,
 
 
-            emitResponse.responseTypes.ERROR,
-            emitResponse.responseTypes.SUCCESS,
-            onPaymentProcessing,
-   
+        emitResponse.responseTypes.ERROR,
+        emitResponse.responseTypes.SUCCESS,
+        onPaymentProcessing,
+
     ]);
 
     const handlePaymentMethodChange = (event) => {
@@ -110,10 +102,10 @@ const PaynowPaymentFields = (props) => {
                             <input type="radio" className="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio paynow_inline" value="ecocash_onemoney" name="paynow_payment_method" id="paynow_payment_method_ecocash_onemoney" onChange={handlePaymentMethodChange} />
                             <label htmlFor="paynow_payment_method_ecocash_onemoney" className="radio woocommerce-form__label woocommerce-form__label-for-radio inline paynow_inline"> Mobile Money Express
                                 <br />
-                           
-                                        <img className="paynow-badges paynow-badge" src={`${plugin_url}/assets/images/ecocash-badge.svg`} alt="Ecocash Badge" />
-                                        <img className="paynow-badge" src={`${plugin_url}/assets/images/onemoney-badge.svg`} alt="One Money Badge" />
-                                 
+
+                                <img className="paynow-badges paynow-badge" src={`${plugin_url}/assets/images/ecocash-badge.svg`} alt="Ecocash Badge" />
+                                <img className="paynow-badge" src={`${plugin_url}/assets/images/onemoney-badge.svg`} alt="One Money Badge" />
+
                             </label>
                         </div>
                         {currency === 'USD' && (
@@ -152,7 +144,7 @@ const PaynowPaymentFields = (props) => {
                     </span>
                 </p>
             )}
-           
+
         </div>
     );
 };

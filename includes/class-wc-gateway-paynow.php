@@ -138,7 +138,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 		// Setup available currency codes.
 		$this->available_currencies = array('USD', 'ZiG'); // nostro / rtgs ?
-	
+
 		// Load the form fields.
 		$this->init_form_fields();
 
@@ -148,7 +148,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 			'products',
 			'subscriptions',
 		);
-		$this->instructions             = $this->get_option( 'instructions', $this->description );
+		$this->instructions             = $this->get_option('instructions', $this->description);
 
 		// Setup default merchant data.
 		$this->merchant_id = $this->settings['merchant_id'];
@@ -178,7 +178,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		add_action('woocommerce_checkout_order_review', array($this, 'add_paynow_custom_checkout_fields'));
 		add_action('woocommerce_store_api_checkout_update_order_from_request', array($this, 'save_custom_checkout_field_value'), 10, 2);
 
-        //add_filter('woocommerce_gateway_description', array($this, 'add_paynow_custom_checkout_fields'), 20,2);
+		//add_filter('woocommerce_gateway_description', array($this, 'add_paynow_custom_checkout_fields'), 20,2);
 
 		add_action('woocommerce_after_checkout_validation', array($this, 'validate_payment_fields'), 10, 2);
 
@@ -401,15 +401,15 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	{
 		$payment_data = $request->get_param('payment_data');
 
-	
+
 		// Loop through the payment data array
 		foreach ($payment_data as $item) {
 			// Access each item (key-value pair)
 			$key = $item['key'];
 			$value = $item['value'];
-		
-		
-			
+
+
+
 			// Example: check if the key is 'PaynowPaymentMethod'
 			if ($key === 'PaynowPaymentMethod') {
 				$_POST['paynow_payment_method'] = $value;
@@ -478,10 +478,10 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	 * Add Payment fields for Paynow
 	 */
 
-public function add_paynow_custom_checkout_fields()
+	public function add_paynow_custom_checkout_fields()
 	{
-    //  if("paynow" === $payment_id){
-    //     ob_start();
+		//  if("paynow" === $payment_id){
+		//     ob_start();
 	?>
 		<div id="paynow_custom_checkout_field" class="paynow_express_payment_mobile">
 			<h3>Payment Channels</h3>
@@ -540,11 +540,11 @@ public function add_paynow_custom_checkout_fields()
 			</p>
 
 		</div>
-		<?php
+	<?php
 
-//  $description .= ob_get_clean(); // Append buffered content
-//      }
-//      return $description."Gateway is  ". $payment_id;
+		//  $description .= ob_get_clean(); // Append buffered content
+		//      }
+		//      return $description."Gateway is  ". $payment_id;
 	}
 
 	/**
@@ -562,11 +562,11 @@ public function add_paynow_custom_checkout_fields()
 		$order = wc_get_order($order_id); // added code in Woo Commerce that needs to be changed
 		$checkout_url = $order->get_checkout_payment_url();
 		$this->log("I got to receipt Page");
-	
+
 		// Check payment
 		if (!$order_id) {
 			error_log("I didnt find an order with that ID");
-			
+
 			wp_redirect($checkout_url);
 			exit;
 		} else {
@@ -671,8 +671,8 @@ public function add_paynow_custom_checkout_fields()
 
 				// first check status, take appropriate action
 				if (strtolower($msg['status']) == strtolower(PS_ERROR)) {
-					wc_add_notice(__("Failed to initiate Transaction ".$msg['error'], 'woocommerce'), 'error');
-					error_log("Failed to initiate Transaction ".$msg['error']);
+					wc_add_notice(__("Failed to initiate Transaction " . $msg['error'], 'woocommerce'), 'error');
+					error_log("Failed to initiate Transaction " . $msg['error']);
 					wp_redirect($checkout_url);
 					exit;
 				} elseif (strtolower($msg['status']) == strtolower(PS_OK)) {
@@ -751,230 +751,230 @@ public function add_paynow_custom_checkout_fields()
 
 		// Save the order to persist the custom data
 		$order->save();
-		?>
+	?>
 
-<style>
-				.paynow-d-flex label {
-					margin-right: 23px;
-					margin-left: 5px;
-					font-size: 16px !important;
-					position: relative;
-					top: -3px;
+		<style>
+			.paynow-d-flex label {
+				margin-right: 23px;
+				margin-left: 5px;
+				font-size: 16px !important;
+				position: relative;
+				top: -3px;
+			}
+
+			.paynow-d-flex input[type='radio'] {
+				height: 16px;
+				width: 16px;
+			}
+
+			#paynow_custom_checkout_field input[type='tel'],
+			#paynow_custom_checkout_field input[type='email'] {
+				width: 70%;
+				font-size: 0.833em;
+				padding: 14px 15px;
+				border: 0;
+				background-color: #eee;
+				color: #666;
+				border-radius: 3px;
+				box-sizing: border-box;
+				margin: 0;
+				outline: 0;
+				line-height: normal;
+			}
+
+			.woocommerce-checkout .checkout.woocommerce-checkout #customer_details .col-1 .woocommerce-billing-fields__field-wrapper .form-row input {
+				background-color: #eee !important;
+			}
+
+			#paynow_custom_checkout_field .required {
+				color: red;
+				font-weight: 700;
+				border: 0 !important;
+				text-decoration: none;
+				visibility: visible;
+			}
+
+			.paynow-d-flex {
+				display: flex;
+				justify-content: space-between;
+				max-width: 75%;
+				flex-wrap: wrap;
+				padding-left: 15px;
+			}
+
+			#ecocash_mobile_number_field {
+				margin-bottom: 5px;
+			}
+
+			.paynow-badges {
+				margin-left: 20px;
+			}
+
+			#paynow_custom_checkout_field .paynow-badge {
+				max-width: 60px;
+			}
+
+			div.instruction {
+				padding: .3em;
+				font-size: 1.2em;
+			}
+
+			div.bubble {
+				border-radius: .2em 1em;
+				display: inline-block;
+				/* *display: inline; */
+				color: white;
+				background: #185ff9;
+				position: relative;
+				font-weight: bold;
+				letter-spacing: 1px;
+			}
+
+			div.code {
+				padding: .5em;
+				line-height: .5em;
+				border-radius: 1em;
+				font-size: 2em;
+				top: 1em;
+				left: -0.6em;
+			}
+
+			.loader,
+			.loader:after {
+				border-radius: 50%;
+				width: 6em;
+				height: 6em;
+			}
+
+			.loader {
+				margin: 30px auto;
+				font-size: 10px;
+				position: relative;
+				text-indent: -9999em;
+				border-top: 1.1em solid rgba(25, 140, 255, 0.2);
+				border-right: 1.1em solid rgba(25, 140, 255, 0.2);
+				border-bottom: 1.1em solid rgba(25, 140, 255, 0.2);
+				border-left: 1.1em solid #198cff;
+				-webkit-transform: translateZ(0);
+				-ms-transform: translateZ(0);
+				transform: translateZ(0);
+				-webkit-animation: load8 1.1s infinite linear;
+				animation: load8 1.1s infinite linear;
+			}
+
+			@-webkit-keyframes load8 {
+				0% {
+					-webkit-transform: rotate(0deg);
+					transform: rotate(0deg);
 				}
 
-				.paynow-d-flex input[type='radio'] {
-					height: 16px;
-					width: 16px;
+				100% {
+					-webkit-transform: rotate(360deg);
+					transform: rotate(360deg);
+				}
+			}
+
+			@keyframes load8 {
+				0% {
+					-webkit-transform: rotate(0deg);
+					transform: rotate(0deg);
+				}
+
+				100% {
+					-webkit-transform: rotate(360deg);
+					transform: rotate(360deg);
+				}
+			}
+
+			.innbucks_container {
+				position: absolute;
+				top: 85%;
+				left: 50%;
+				-ms-transform: translateX(-50%) translateY(-65%);
+				-webkit-transform: translate(-50%, -50%);
+				transform: translate(-50%, -50%);
+				width: 80%;
+			}
+
+			#paynow_email {
+				display: none;
+				margin-bottom: 15px;
+			}
+
+			@media (max-width:639px) {
+				.innbucks_container {
+					top: 0%;
+					opacity: 1;
+					background-color: #ffffff;
+					transform: translate(-50%, 0%);
+					width: 100vw;
+				}
+
+			}
+
+			.wd-loader-wrapper {
+				position: fixed;
+				width: 100vw;
+				height: 100vh;
+				background: rgba(255, 255, 255, .85);
+				z-index: 999999;
+				top: 0;
+				left: 0;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				text-align: center;
+			}
+
+			.wd-loader-wrapper .paynow-express-loader {
+				border: 16px solid #f3f3f3;
+				/* Light grey */
+				border-top: 16px solid #3498db;
+				/* Blue */
+				border-radius: 50%;
+				width: 120px;
+				height: 120px;
+				animation: spin 2s linear infinite;
+				margin: 0 auto;
+				margin-bottom: 2rem;
+			}
+
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
+
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+
+			@media (max-width:569px) {
+				.paynow-d-flex {
+					max-width: 100%;
+					flex-direction: column;
+				}
+
+				#paynow_custom_checkout_field .paynow-badge {
+					max-width: 40px;
+
+				}
+
+				#paynow_custom_checkout_field .paynow-badges {
+					margin-left: 25px;
 				}
 
 				#paynow_custom_checkout_field input[type='tel'],
 				#paynow_custom_checkout_field input[type='email'] {
-					width: 70%;
-					font-size: 0.833em;
-					padding: 14px 15px;
-					border: 0;
-					background-color: #eee;
-					color: #666;
-					border-radius: 3px;
-					box-sizing: border-box;
-					margin: 0;
-					outline: 0;
-					line-height: normal;
+					width: 100%;
 				}
 
-				.woocommerce-checkout .checkout.woocommerce-checkout #customer_details .col-1 .woocommerce-billing-fields__field-wrapper .form-row input {
-					background-color: #eee !important;
+				.paynow-d-flex div {
+					margin-top: 15px;
 				}
-
-				#paynow_custom_checkout_field .required {
-					color: red;
-					font-weight: 700;
-					border: 0 !important;
-					text-decoration: none;
-					visibility: visible;
-				}
-
-				.paynow-d-flex {
-					display: flex;
-					justify-content: space-between;
-					max-width: 75%;
-					flex-wrap: wrap;
-					padding-left: 15px;
-				}
-
-				#ecocash_mobile_number_field {
-					margin-bottom: 5px;
-				}
-
-				.paynow-badges {
-					margin-left: 20px;
-				}
-
-				#paynow_custom_checkout_field .paynow-badge {
-					max-width: 60px;
-				}
-
-				div.instruction {
-					padding: .3em;
-					font-size: 1.2em;
-				}
-
-				div.bubble {
-					border-radius: .2em 1em;
-					display: inline-block;
-					/* *display: inline; */
-					color: white;
-					background: #185ff9;
-					position: relative;
-					font-weight: bold;
-					letter-spacing: 1px;
-				}
-
-				div.code {
-					padding: .5em;
-					line-height: .5em;
-					border-radius: 1em;
-					font-size: 2em;
-					top: 1em;
-					left: -0.6em;
-				}
-
-				.loader,
-				.loader:after {
-					border-radius: 50%;
-					width: 6em;
-					height: 6em;
-				}
-
-				.loader {
-					margin: 30px auto;
-					font-size: 10px;
-					position: relative;
-					text-indent: -9999em;
-					border-top: 1.1em solid rgba(25, 140, 255, 0.2);
-					border-right: 1.1em solid rgba(25, 140, 255, 0.2);
-					border-bottom: 1.1em solid rgba(25, 140, 255, 0.2);
-					border-left: 1.1em solid #198cff;
-					-webkit-transform: translateZ(0);
-					-ms-transform: translateZ(0);
-					transform: translateZ(0);
-					-webkit-animation: load8 1.1s infinite linear;
-					animation: load8 1.1s infinite linear;
-				}
-
-				@-webkit-keyframes load8 {
-					0% {
-						-webkit-transform: rotate(0deg);
-						transform: rotate(0deg);
-					}
-
-					100% {
-						-webkit-transform: rotate(360deg);
-						transform: rotate(360deg);
-					}
-				}
-
-				@keyframes load8 {
-					0% {
-						-webkit-transform: rotate(0deg);
-						transform: rotate(0deg);
-					}
-
-					100% {
-						-webkit-transform: rotate(360deg);
-						transform: rotate(360deg);
-					}
-				}
-
-				.innbucks_container {
-					position: absolute;
-					top: 85%;
-					left: 50%;
-					-ms-transform: translateX(-50%) translateY(-65%);
-					-webkit-transform: translate(-50%, -50%);
-					transform: translate(-50%, -50%);
-					width: 80%;
-				}
-
-				#paynow_email {
-					display: none;
-					margin-bottom: 15px;
-				}
-
-				@media (max-width:639px) {
-					.innbucks_container {
-						top: 0%;
-						opacity: 1;
-						background-color: #ffffff;
-						transform: translate(-50%, 0%);
-						width: 100vw;
-					}
-
-				}
-
-				.wd-loader-wrapper {
-					position: fixed;
-					width: 100vw;
-					height: 100vh;
-					background: rgba(255, 255, 255, .85);
-					z-index: 999999;
-					top: 0;
-					left: 0;
-					display: flex;
-					flex-direction: column;
-					justify-content: center;
-					align-items: center;
-					text-align: center;
-				}
-
-				.wd-loader-wrapper .paynow-express-loader {
-					border: 16px solid #f3f3f3;
-					/* Light grey */
-					border-top: 16px solid #3498db;
-					/* Blue */
-					border-radius: 50%;
-					width: 120px;
-					height: 120px;
-					animation: spin 2s linear infinite;
-					margin: 0 auto;
-					margin-bottom: 2rem;
-				}
-
-				@keyframes spin {
-					0% {
-						transform: rotate(0deg);
-					}
-
-					100% {
-						transform: rotate(360deg);
-					}
-				}
-
-				@media (max-width:569px) {
-					.paynow-d-flex {
-						max-width: 100%;
-						flex-direction: column;
-					}
-
-					#paynow_custom_checkout_field .paynow-badge {
-						max-width: 40px;
-
-					}
-
-					#paynow_custom_checkout_field .paynow-badges {
-						margin-left: 25px;
-					}
-
-					#paynow_custom_checkout_field input[type='tel'],
-					#paynow_custom_checkout_field input[type='email'] {
-						width: 100%;
-					}
-
-					.paynow-d-flex div {
-						margin-top: 15px;
-					}
-				}
-			</style>
+			}
+		</style>
 
 		<?php
 
@@ -1284,9 +1284,5 @@ public function add_paynow_custom_checkout_fields()
 	public function paynow_enqueue_script()
 	{
 		wp_enqueue_script('my-js',  $this->plugin_url() . '/assets/js/paynow-js.js', array('jquery'), $this->version, true);
-
 	}
-
-
 } // End Class
-

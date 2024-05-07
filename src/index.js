@@ -25,7 +25,7 @@ const Content = () => {
  */
 const Label = ( props ) => {
 	const { PaymentMethodLabel } = props.components;
-	return <PaymentMethodLabel text={ label } />;
+	return <PaymentMethodLabel text={ label } icon={settings.icon} />;
 };
 
 /**
@@ -33,7 +33,12 @@ const Label = ( props ) => {
  */
 const Paynow = {
 	name: "paynow",
-	label: <Label />,
+	label: <img
+	src={ settings.icon }
+	style={{height: "16px"}}
+	alt={ label }
+/>,
+	
 	content: <PaynowCheckoutFields />,
 	edit: <PaynowCheckoutFields />,
 	canMakePayment: () => true,

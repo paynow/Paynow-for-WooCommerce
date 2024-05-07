@@ -76,7 +76,7 @@ final class WC_Gateway_Paynow_Blocks_Support extends AbstractPaymentMethodType {
 		return [
 			'title'       => $this->get_setting( 'title' ),
 			'description' => $this->get_setting( 'description' ),
-			'icon' => $this->get_setting("icon"),
+			'icon' => WC_Paynow::plugin_url() . '/assets/images/icon.png',
 			'plugin_url' => WC_Paynow::plugin_url(),
 			'currency' =>get_woocommerce_currency(),  
 			'supports'    => array_filter( $this->gateway->supports, [ $this->gateway, 'supports' ] )

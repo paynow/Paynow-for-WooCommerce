@@ -1,12 +1,20 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 3,
-	"name": "extension/paynow",
-	"version": "1.3.2",
-	"title": "Paynow Gateway For Woocommerce",
-	"category": "widgets",
-	"textdomain": "paynow-gw-for-woocommerce",
-	"editorScript": "file:./build/index.js",
-	"editorStyle": "file:./build/index.css",
-	"style": "file:./build/style-index.css"
+    "apiVersion": 3,
+
+	"name": "woocommerce/paynow-payment-fields",
+	"title": "Paynow Fields",
+	"description": "Allow customers to place their order.",
+	"category": "woocommerce",
+	"parent": [ "woocommerce/checkout-fields-block" ],
+	"textdomain": "woocommerce",
+	"attributes": {
+		"lock": {
+			"type": "object",
+			"default": {
+				"remove": true,
+				"move": true
+			}
+		}
+	}
 }

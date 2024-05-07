@@ -1,4 +1,5 @@
 <?php
+
 use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType;
 
 /**
@@ -6,7 +7,8 @@ use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodTyp
  *
  * @since 1.0.3
  */
-final class WC_Gateway_Paynow_Blocks_Support extends AbstractPaymentMethodType {
+final class WC_Gateway_Paynow_Blocks_Support extends AbstractPaymentMethodType
+{
 
 
 	private $gateway;
@@ -21,10 +23,11 @@ final class WC_Gateway_Paynow_Blocks_Support extends AbstractPaymentMethodType {
 	/**
 	 * Initializes the payment method type.
 	 */
-	public function initialize() {
-		$this->settings = get_option( 'woocommerce_paynow_settings', [] );
+	public function initialize()
+	{
+		$this->settings = get_option('woocommerce_paynow_settings', []);
 		$gateways       = WC()->payment_gateways->payment_gateways();
-		$this->gateway  = $gateways[ $this->name ];
+		$this->gateway  = $gateways[$this->name];
 	}
 
 	/**
@@ -32,7 +35,8 @@ final class WC_Gateway_Paynow_Blocks_Support extends AbstractPaymentMethodType {
 	 *
 	 * @return boolean
 	 */
-	public function is_active() {
+	public function is_active()
+	{
 		return $this->gateway->is_available();
 	}
 
@@ -41,11 +45,12 @@ final class WC_Gateway_Paynow_Blocks_Support extends AbstractPaymentMethodType {
 	 *
 	 * @return array
 	 */
-	public function get_payment_method_script_handles() {
+	public function get_payment_method_script_handles()
+	{
 		$script_path       = '/build/index.js';
 		$script_asset_path = WC_Paynow::plugin_abspath() . 'build/index.asset.php';
-		$script_asset      = file_exists( $script_asset_path )
-			? require( $script_asset_path )
+		$script_asset      = file_exists($script_asset_path)
+			? require($script_asset_path)
 			: array(
 				'dependencies' => array(),
 				'version'      => '1.2.0'
@@ -55,16 +60,16 @@ final class WC_Gateway_Paynow_Blocks_Support extends AbstractPaymentMethodType {
 		wp_register_script(
 			'wc-paynow-payments-blocks',
 			$script_url,
-			$script_asset[ 'dependencies' ],
-			$script_asset[ 'version' ],
+			$script_asset['dependencies'],
+			$script_asset['version'],
 			true
 		);
 
-		if ( function_exists( 'wp_set_script_translations' ) ) {
-			wp_set_script_translations( 'wc-paynow-payments-blocks', 'woocommerce-gateway-paynow', WC_Paynow::plugin_abspath() . 'languages/' );
+		if (function_exists('wp_set_script_translations')) {
+			wp_set_script_translations('wc-paynow-payments-blocks', 'woocommerce-gateway-paynow', WC_Paynow::plugin_abspath() . 'languages/');
 		}
 
-		return [ 'wc-paynow-payments-blocks' ];
+		return ['wc-paynow-payments-blocks'];
 	}
 
 	/**
@@ -72,14 +77,15 @@ final class WC_Gateway_Paynow_Blocks_Support extends AbstractPaymentMethodType {
 	 *
 	 * @return array
 	 */
-	public function get_payment_method_data() {
+	public function get_payment_method_data()
+	{
 		return [
-			'title'       => $this->get_setting( 'title' ),
-			'description' => $this->get_setting( 'description' ),
+			'title'       => $this->get_setting('title'),
+			'description' => $this->get_setting('description'),
 			'icon' => WC_Paynow::plugin_url() . '/assets/images/icon.png',
 			'plugin_url' => WC_Paynow::plugin_url(),
-			'currency' =>get_woocommerce_currency(),  
-			'supports'    => array_filter( $this->gateway->supports, [ $this->gateway, 'supports' ] )
+			'currency' => get_woocommerce_currency(),
+			'supports'    => array_filter($this->gateway->supports, [$this->gateway, 'supports'])
 		];
 	}
 }

@@ -989,10 +989,6 @@ public function add_paynow_custom_checkout_fields()
 
 		?>
 
-
-
-			
-
 			<section style="width: 100%; height: 100%; overflow: hidden; margin-top:150px">
 				<div class="innbucks_container">
 					<div class="loader white"></div>
@@ -1048,13 +1044,13 @@ public function add_paynow_custom_checkout_fields()
 					<div class="paynow-express-loader"></div>
 					<p style="text-align: center; color: #2d3040; font-family: Arial, sans-serif; font-size: 18px">Waiting for mobile money payment. Please check your phone </p>
 					<div style="font-size: 16px; font-weight: normal; margin-top: 50px;">
-						<div class="dial-number">
+						<!-- <div class="dial-number">
 							If you don't get a prompt on your handset
 							<div style="margin-bottom: 3em;">
 								<div class="bubble instruction">dial</div>
 								<div class="bubble code">*151*2*4#</div>
 							</div>
-						</div>
+						</div> -->
 
 					</div>
 

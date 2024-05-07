@@ -1,17 +1,25 @@
 <?php
-/**
-	Plugin Name: Paynow Zimbabwe Payment Gateway
-	Plugin URI: https://developers.paynow.co.zw/docs/woocommerce.html
-	Description: A payment gateway for Zimbabwean payment system, Paynow for Woocommerce.
-	Author: Webdev
 
-	Version: 1.3.2
-	Author URI: https://www.paynow.co.zw/
-	Requires at least: 3.5
-	Tested up to: 4.1
-*/
+/**
+ *	Plugin Name: Paynow Zimbabwe Payment Gateway
+ *	Plugin URI: https://developers.paynow.co.zw/docs/woocommerce.html
+ *	Description: A payment gateway for Zimbabwean payment system, Paynow for Woocommerce.
+ *	Author: Paynow Zimbabwe
+ *	Version: 1.3.2
+ *	Author URI: https://www.paynow.co.zw/
+ *	Requires at least: 3.5
+ *	Tested up to: 4.1
+ */
 
 add_action('plugins_loaded', 'woocommerce_paynow_init');
+
+
+defined('ABSPATH') || exit;
+
+if (!defined('MAIN_PLUGIN_FILE')) {
+	define('MAIN_PLUGIN_FILE', __FILE__);
+}
+
 
 /**
  * Initialize the gateway.
@@ -39,6 +47,7 @@ function woocommerce_paynow_init()
 			return;
 		}
 	};
+
 
 	class WC_Paynow
 	{
@@ -79,8 +88,8 @@ function woocommerce_paynow_init()
 
 		public function init()
 		{
-			include_once __DIR__ . '/classes/class-wc-gateway-paynow.php';
-			include_once __DIR__ . '/classes/class-wc-gateway-paynow-helper.php';
+			include_once __DIR__ . '/includes/class-wc-gateway-paynow.php';
+			include_once __DIR__ . '/includes/class-wc-gateway-paynow-helper.php';
 			include_once __DIR__ . '/includes/constants.php';
 
 			/**
@@ -108,6 +117,8 @@ function woocommerce_paynow_init()
 
 			add_filter('woocommerce_payment_gateways', array($this, 'woocommerce_paynow_add_gateway'));
 			add_action('woocommerce_thankyou', array($this, 'order_cancelled_redirect'), 10, 1);
+			add_action('woocommerce_blocks_loaded', array($this, 'woocommerce_gateway_paynow_woocommerce_block_support'));
+
 			add_action('rest_api_init', function () {
 				register_rest_route('wc-paynow-express/v1', '/order/(?P<id>\d+)', array(
 					'methods' => 'POST',
@@ -116,16 +127,15 @@ function woocommerce_paynow_init()
 				));
 			});
 		}
-
 		/**
 		 * Add the gateway to WooCommerce
 		 *
 		 * @since 1.0.0
 		 */
-		public function woocommerce_paynow_add_gateway($methods)
+		public function woocommerce_paynow_add_gateway($gateways)
 		{
-			$methods[] = 'WC_Gateway_Paynow';
-			return $methods;
+			$gateways[] = 'WC_Gateway_Paynow';
+			return $gateways;
 		} // End woocommerce_paynow_add_gateway()
 
 		public function order_cancelled_redirect($order_id)
@@ -140,7 +150,40 @@ function woocommerce_paynow_init()
 				wp_redirect($order->get_checkout_payment_url());
 			}
 		}
+
+		public static function plugin_url()
+		{
+			return untrailingslashit(plugins_url('/', __FILE__));
+		}
+
+		/**
+		 * Plugin url.
+		 *
+		 * @return string
+		 */
+		public static function plugin_abspath()
+		{
+			return trailingslashit(plugin_dir_path(__FILE__));
+		}
+
+
+		/**
+		 * Register Woocommerce Blocks Support
+		 */
+		public static function woocommerce_gateway_paynow_woocommerce_block_support()
+		{
+			if (class_exists('Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType')) {
+				require_once 'includes/blocks-wc-paynow.php';
+				add_action(
+					'woocommerce_blocks_payment_method_type_registration',
+					function (Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry) {
+						$payment_method_registry->register(new WC_Gateway_Paynow_Blocks_Support());
+					}
+				);
+			}
+		}
 	}
+
 
 	WC_Paynow::get_instance();
 } // End woocommerce_paynow_init()

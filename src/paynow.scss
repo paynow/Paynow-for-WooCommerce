@@ -3,7 +3,7 @@
     margin-left: 5px;
     font-size: 16px !important;
     position: relative;
-    top: 43px;
+    top: -3px;
 }
 
 .paynow-d-flex input[type='radio'] {
@@ -73,16 +73,7 @@ div.bubble {
     font-weight: bold;
     letter-spacing: 1px;
 }
-.paynow_inline 
-{
-    display: inline-block !important;
-}
-.paynow_paynow{
-    margin-bottom: 50px;
-}
-.paynow_paynow label{
-    top:66px;
-}
+
 div.code {
     padding: .5em;
     line-height: .5em;
@@ -150,7 +141,7 @@ div.code {
 }
 
 #paynow_email {
-
+    display: none;
     margin-bottom: 15px;
 }
 
@@ -162,18 +153,7 @@ div.code {
         transform: translate(-50%, 0%);
         width: 100vw;
     }
-    
-    .paynow_inline {
-        top: 30px !important;
-        margin-bottom: 15px;
-    }
-    @media (max-width:500px) {
-        .paynow_paynow label{
-            margin-top: 15px;
-            top:0px !important;
-            display: inline !important;
-        }
-    }
+
 }
 
 .wd-loader-wrapper {

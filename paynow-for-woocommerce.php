@@ -1,14 +1,14 @@
 <?php
 
 /**
-*	Plugin Name: Paynow Zimbabwe Payment Gateway
-*	Plugin URI: https://developers.paynow.co.zw/docs/woocommerce.html
-*	Description: A payment gateway for Zimbabwean payment system, Paynow for Woocommerce.
-*	Author: Paynow Zimbabwe
-*	Version: 1.3.2
-*	Author URI: https://www.paynow.co.zw/
-*	Requires at least: 3.5
-*	Tested up to: 4.1
+ *	Plugin Name: Paynow Zimbabwe Payment Gateway
+ *	Plugin URI: https://developers.paynow.co.zw/docs/woocommerce.html
+ *	Description: A payment gateway for Zimbabwean payment system, Paynow for Woocommerce.
+ *	Author: Paynow Zimbabwe
+ *	Version: 1.3.2
+ *	Author URI: https://www.paynow.co.zw/
+ *	Requires at least: 3.5
+ *	Tested up to: 4.1
  */
 
 add_action('plugins_loaded', 'woocommerce_paynow_init');
@@ -19,7 +19,7 @@ defined('ABSPATH') || exit;
 if (!defined('MAIN_PLUGIN_FILE')) {
 	define('MAIN_PLUGIN_FILE', __FILE__);
 }
-	
+
 
 /**
  * Initialize the gateway.
@@ -48,7 +48,7 @@ function woocommerce_paynow_init()
 		}
 	};
 
-   
+
 	class WC_Paynow
 	{
 
@@ -117,7 +117,7 @@ function woocommerce_paynow_init()
 
 			add_filter('woocommerce_payment_gateways', array($this, 'woocommerce_paynow_add_gateway'));
 			add_action('woocommerce_thankyou', array($this, 'order_cancelled_redirect'), 10, 1);
-			add_action( 'woocommerce_blocks_loaded', array( $this, 'woocommerce_gateway_paynow_woocommerce_block_support' ) );
+			add_action('woocommerce_blocks_loaded', array($this, 'woocommerce_gateway_paynow_woocommerce_block_support'));
 
 			add_action('rest_api_init', function () {
 				register_rest_route('wc-paynow-express/v1', '/order/(?P<id>\d+)', array(
@@ -126,7 +126,7 @@ function woocommerce_paynow_init()
 					'permission_callback' => '__return_true',
 				));
 			});
-		 }
+		}
 		/**
 		 * Add the gateway to WooCommerce
 		 *
@@ -156,7 +156,7 @@ function woocommerce_paynow_init()
 			return untrailingslashit(plugins_url('/', __FILE__));
 		}
 
-			/**
+		/**
 		 * Plugin url.
 		 *
 		 * @return string
@@ -182,11 +182,8 @@ function woocommerce_paynow_init()
 				);
 			}
 		}
-	
 	}
 
 
 	WC_Paynow::get_instance();
-
-     
 } // End woocommerce_paynow_init()

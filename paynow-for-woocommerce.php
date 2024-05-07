@@ -48,6 +48,7 @@ function woocommerce_paynow_init()
 		}
 	};
 
+   
 	class WC_Paynow
 	{
 
@@ -116,24 +117,25 @@ function woocommerce_paynow_init()
 
 			add_filter('woocommerce_payment_gateways', array($this, 'woocommerce_paynow_add_gateway'));
 			add_action('woocommerce_thankyou', array($this, 'order_cancelled_redirect'), 10, 1);
+			add_action( 'woocommerce_blocks_loaded', array( $this, 'woocommerce_gateway_paynow_woocommerce_block_support' ) );
 
 			add_action('rest_api_init', function () {
 				register_rest_route('wc-paynow-express/v1', '/order/(?P<id>\d+)', array(
 					'methods' => 'POST',
-					'callback' => array(new WC_Gateway_Paynow(false), 'wc_express_check_status'),
+					'callback' => array(new WC_Gateway_Paynow(), 'wc_express_check_status'),
 					'permission_callback' => '__return_true',
 				));
 			});
-		}
+		 }
 		/**
 		 * Add the gateway to WooCommerce
 		 *
 		 * @since 1.0.0
 		 */
-		public function woocommerce_paynow_add_gateway($methods)
+		public function woocommerce_paynow_add_gateway($gateways)
 		{
-			$methods[] = 'WC_Gateway_Paynow';
-			return $methods;
+			$gateways[] = 'WC_Gateway_Paynow';
+			return $gateways;
 		} // End woocommerce_paynow_add_gateway()
 
 		public function order_cancelled_redirect($order_id)
@@ -185,4 +187,6 @@ function woocommerce_paynow_init()
 
 
 	WC_Paynow::get_instance();
+
+     
 } // End woocommerce_paynow_init()

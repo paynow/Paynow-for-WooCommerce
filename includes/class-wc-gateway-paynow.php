@@ -183,7 +183,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		add_action('woocommerce_after_checkout_validation', array($this, 'validate_payment_fields'), 10, 2);
 
 
-		wp_register_style('paynow-style', $this->plugin_url() . '/assets/css/paynow-style.css');
+		wp_register_style('paynow-style', $this->plugin_url() . '/assets/css/paynow-non-blocks-style.css');
 		add_action('wp_enqueue_scripts',  array($this, 'paynow_enqueue_script'));
 
 		add_action('woocommerce_receipt_paynow', array($this, 'receipt_page'));

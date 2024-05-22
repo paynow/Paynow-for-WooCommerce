@@ -6,7 +6,8 @@
     top: 15px;
 }
 .paynow_paynow label {
-    top:25px
+    top:25px;
+    margin-bottom: 20px;
 }
 
 .paynow-d-flex input[type='radio'] {

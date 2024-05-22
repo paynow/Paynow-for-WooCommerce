@@ -3,7 +3,7 @@ Contributors: webdevprojects
 Tags: Paynow, Woocommerce
 Requires at least: 4.7
 Tested up to: 6.0
-Stable tag: 1.3.2
+Stable tag: 1.3.3
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html

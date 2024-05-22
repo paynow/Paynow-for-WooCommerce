@@ -5,7 +5,7 @@
  *	Plugin URI: https://developers.paynow.co.zw/docs/woocommerce.html
  *	Description: A payment gateway for Zimbabwean payment system, Paynow for Woocommerce.
  *	Author: Paynow Zimbabwe
- *	Version: 1.3.2
+ *	Version: 1.3.3
  *	Author URI: https://www.paynow.co.zw/
  *	Requires at least: 3.5
  *	Tested up to: 4.1

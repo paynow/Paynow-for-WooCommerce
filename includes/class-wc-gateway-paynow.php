@@ -748,9 +748,10 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		//Update order status to stop woorcommerce from generating an order with the same id.
 		$order->update_status('pending');
 
-
 		// Save the order to persist the custom data
 		$order->save();
+		$phone = $order->get_meta('_ecocash_mobile_number');
+
 	?>
 
 		<style>
@@ -1042,7 +1043,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 				<div class="wd-loader-content">
 					<div class="paynow-express-loader"></div>
-					<p style="text-align: center; color: #2d3040; font-family: Arial, sans-serif; font-size: 18px">Waiting for mobile money payment. Please check your phone </p>
+					<p style="text-align: center; color: #2d3040; font-family: Arial, sans-serif; font-size: 18px">Waiting for mobile money payment from <?php echo $phone; ?> . Please check your phone </p>
 					<div style="font-size: 16px; font-weight: normal; margin-top: 50px;">
 						<!-- <div class="dial-number">
 							If you don't get a prompt on your handset

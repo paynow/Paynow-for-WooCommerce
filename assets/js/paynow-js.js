@@ -2,10 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initially hide the field
     var ecocashMobileNumberField = document.getElementById('ecocash_mobile_number_field');
     var ecocash_nummber = document.getElementById('ecocash_mobile_number')
-    if (ecocashMobileNumberField !== null) {
-        ecocashMobileNumberField.style.display = 'none';
-
-    }
+    ecocashMobileNumberField.style.display = 'none';
     var paynow_email = document.getElementById('paynow_email');
     var paynow_auth_email = document.getElementById('paynow_auth_email');
 
@@ -25,41 +22,34 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-    var billingEmailInput = document.querySelector('#email');
+    var billingEmailInput = document.querySelector('#billing_email');
     var paynowAuthEmailInput = document.querySelector('#paynow_auth_email');
-    if (paynowAuthEmailInput !== null) {
+    paynowAuthEmailInput.value = billingEmailInput.value;
+
+    // Add an event listener to the billingEmailInput field
+    billingEmailInput.addEventListener('keyup', function () {
+        // Copy the value from billingEmailInput to paynowAuthEmailInput
         paynowAuthEmailInput.value = billingEmailInput.value;
+    });
+    
 
-    }
-
-    if (billingEmailInput !== null) {
-
-
-        // Add an event listener to the billingEmailInput field
-        billingEmailInput.addEventListener('keyup', function () {
-            // Copy the value from billingEmailInput to paynowAuthEmailInput
-            if (paynowAuthEmailInput !== null) {
-                paynowAuthEmailInput.value = billingEmailInput.value;
-            }
-        });
-    }
 
     (function ($) {
         'use strict';
-
+    
         $(document).ready(function () {
             updatedPaymentGateway();
-            $('form.checkout').on('change', 'input[name="payment_method"]', function () {
+            $('form.checkout').on('change', 'input[name="payment_method"]', function () {    
                 updatedPaymentGateway();
             });
         });
-
+    
         function updatedPaymentGateway() {
             const current = $('form[name="checkout"] input[name="payment_method"]:checked').val();
-
+    
             if (current == 'paynow') {
                 $("#paynow_custom_checkout_field").show()
-            } else {
+            }else{
                 $("#paynow_custom_checkout_field").hide()
             }
         }

@@ -5,7 +5,7 @@
  *	Plugin URI: https://developers.paynow.co.zw/docs/woocommerce.html
  *	Description: A payment gateway for Zimbabwean payment system, Paynow for Woocommerce.
  *	Author: Paynow Zimbabwe
- *	Version: 1.3.2
+ *	Version: 1.3.3
  *	Author URI: https://www.paynow.co.zw/
  *	Requires at least: 3.5
  *	Tested up to: 4.1
@@ -88,7 +88,11 @@ function woocommerce_paynow_init()
 
 		public function init()
 		{
-			include_once __DIR__ . '/includes/class-wc-gateway-paynow.php';
+			if (WC_Blocks_Utils::has_block_in_page(wc_get_page_id('checkout'), 'woocommerce/checkout')) {
+				include_once __DIR__ . '/includes/class-wc-gateway-paynow.php';
+			} else {
+				include_once __DIR__ . '/includes/class-wc-gateway-non-block-paynow.php';
+			}
 			include_once __DIR__ . '/includes/class-wc-gateway-paynow-helper.php';
 			include_once __DIR__ . '/includes/constants.php';
 
@@ -117,7 +121,9 @@ function woocommerce_paynow_init()
 
 			add_filter('woocommerce_payment_gateways', array($this, 'woocommerce_paynow_add_gateway'));
 			add_action('woocommerce_thankyou', array($this, 'order_cancelled_redirect'), 10, 1);
-			add_action('woocommerce_blocks_loaded', array($this, 'woocommerce_gateway_paynow_woocommerce_block_support'));
+			if (WC_Blocks_Utils::has_block_in_page(wc_get_page_id('checkout'), 'woocommerce/checkout')) {
+				add_action('woocommerce_blocks_loaded', array($this, 'woocommerce_gateway_paynow_woocommerce_block_support'));
+			}
 
 			add_action('rest_api_init', function () {
 				register_rest_route('wc-paynow-express/v1', '/order/(?P<id>\d+)', array(

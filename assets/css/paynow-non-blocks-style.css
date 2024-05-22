@@ -3,7 +3,10 @@
     margin-left: 5px;
     font-size: 16px !important;
     position: relative;
-    top: -3px;
+    top: 15px;
+}
+.paynow_paynow label {
+    top:25px
 }
 
 .paynow-d-flex input[type='radio'] {

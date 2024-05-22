@@ -524,7 +524,8 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 				// first check status, take appropriate action
 				if (strtolower($msg['status']) == strtolower(PS_ERROR)) {
-					
+					wc_add_notice(__("Initiate Payment Error: " . $msg['error'], 'woocommerce'), 'error');
+
 					wp_redirect($checkout_url);
 					exit;
 				} elseif (strtolower($msg['status']) == strtolower(PS_OK)) {

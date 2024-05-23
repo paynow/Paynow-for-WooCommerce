@@ -49,10 +49,9 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		$this->forex_merchant_id = $this->settings['forex_merchant_id'];
 		$this->forex_merchant_key = $this->settings['forex_merchant_key'];
 
-		$this->initiate_transaction_url = $this->settings['paynow_initiate_transaction_url'] ?? PAYNOW_INITIATE_TRANSACTION_URL;
-
-		$this->initiate_remote_transaction_url = $this->settings['paynow_remote_transaction_url'] ?? PAYNOW_INITIATE_REMOTE_TRANSACTION_URL;
-
+		$this->initiate_transaction_url =  PAYNOW_INITIATE_TRANSACTION_URL;
+		$this->initiate_remote_transaction_url = PAYNOW_INITIATE_REMOTE_TRANSACTION_URL;
+		
 		$this->title = $this->settings['title'];
 
 		// this is the url paynow will send it's response to

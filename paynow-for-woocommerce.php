@@ -100,20 +100,21 @@ function woocommerce_paynow_init()
 			 * Custom currency and currency symbol
 			 */
 			add_filter('woocommerce_currencies', 'add_zig_currency');
+			add_filter('woocommerce_currency_symbol', 'add_zig_currency_symbol', 10, 2);
+
 
 			function add_zig_currency($currencies)
 			{
-				$currencies['ZiG'] = __('Zimbabwe', 'woocommerce');
+				$currencies['ZIG'] = __('Zimbabwe', 'woocommerce');
 				return $currencies;
 			}
 
-			add_filter('woocommerce_currency_symbol', 'add_zig_currency_symbol', 10, 2);
 
 			function add_zig_currency_symbol($currency_symbol, $currency)
 			{
 				switch ($currency) {
-					case 'ZiG':
-						$currency_symbol = 'ZiG';
+					case 'ZIG':
+						$currency_symbol = 'ZIG';
 						break;
 				}
 				return $currency_symbol;
@@ -121,6 +122,7 @@ function woocommerce_paynow_init()
 
 			add_filter('woocommerce_payment_gateways', array($this, 'woocommerce_paynow_add_gateway'));
 			add_action('woocommerce_thankyou', array($this, 'order_cancelled_redirect'), 10, 1);
+
 			if (WC_Blocks_Utils::has_block_in_page(wc_get_page_id('checkout'), 'woocommerce/checkout')) {
 				add_action('woocommerce_blocks_loaded', array($this, 'woocommerce_gateway_paynow_woocommerce_block_support'));
 			}

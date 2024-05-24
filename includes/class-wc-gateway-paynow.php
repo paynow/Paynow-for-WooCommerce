@@ -137,18 +137,18 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		$this->available_countries = array('ZW');
 
 		// Setup available currency codes.
-		$this->available_currencies = array('USD', 'ZiG'); // nostro / rtgs ?
+		$this->available_currencies = array('USD', 'ZIG'); // nostro / rtgs ?
 
 		// Load the form fields.
 		$this->init_form_fields();
 
 		// Load the settings.
 		$this->init_settings();
-		$this->supports           = array(
+		$this->supports = array(
 			'products',
 			'subscriptions',
 		);
-		$this->instructions             = $this->get_option('instructions', $this->description);
+		$this->instructions  = $this->get_option('instructions', $this->description);
 
 		// Setup default merchant data.
 		$this->merchant_id = $this->settings['merchant_id'];
@@ -304,7 +304,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 		$authSet = false;
 
-		if ('ZiG' == $user_currency) {
+		if ('ZIG' == $user_currency) {
 			$authSet =  '' != $this->settings['merchant_id'] && '' != $this->settings['merchant_key'];
 		} elseif ('USD' == $user_currency) {
 			$authSet = '' !=  $this->settings['forex_merchant_id'] &&  '' != $this->settings['forex_merchant_key'];
@@ -1178,7 +1178,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 				$currency = $order->get_currency();
 
-				$MerchantKey =   'ZiG' == $currency ? $this->merchant_key : $this->forex_merchant_key;
+				$MerchantKey =   'ZIG' == $currency ? $this->merchant_key : $this->forex_merchant_key;
 				$validateHash = (new WC_Paynow_Helper())->CreateHash($msg, $MerchantKey);
 
 				if ($validateHash != $msg['hash']) {

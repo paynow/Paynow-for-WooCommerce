@@ -55,7 +55,7 @@ final class WC_Gateway_Paynow_Blocks_Support extends AbstractPaymentMethodType
 				'dependencies' => array(),
 				'version'      => '1.2.0'
 			);
-		$script_url        = WC_Paynow::plugin_url() . $script_path;
+		$script_url = WC_Paynow::plugin_url() . $script_path;
 
 		wp_register_script(
 			'wc-paynow-payments-blocks',

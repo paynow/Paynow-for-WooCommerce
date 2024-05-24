@@ -40,4 +40,9 @@ if (!defined('PS_DELIVERED')) {
 if (!defined('PS_AWAITING_REDIRECT')) {
 	define('PS_AWAITING_REDIRECT', 'awaiting redirect');
 }
-
+if (!defined('PAYNOW_INITIATE_REMOTE_TRANSACTION_URL')) {
+	define('PAYNOW_INITIATE_REMOTE_TRANSACTION_URL', 'https://www.paynow.co.zw/interface/remotetransaction');
+}
+if (!defined('PAYNOW_INITIATE_TRANSACTION_URL')) {
+	define('PAYNOW_INITIATE_TRANSACTION_URL', 'https://www.paynow.co.zw/Interface/InitiateTransaction');
+}

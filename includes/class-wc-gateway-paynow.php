@@ -157,9 +157,9 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		$this->forex_merchant_id = $this->settings['forex_merchant_id'];
 		$this->forex_merchant_key = $this->settings['forex_merchant_key'];
 
-		$this->initiate_transaction_url = $this->settings['paynow_initiate_transaction_url'];
+		$this->initiate_transaction_url =  PAYNOW_INITIATE_TRANSACTION_URL;
 
-		$this->initiate_remote_transaction_url = $this->settings['paynow_remote_transaction_url'];
+		$this->initiate_remote_transaction_url =  PAYNOW_INITIATE_REMOTE_TRANSACTION_URL;
 
 		$this->title = $this->get_option('title');
 		$this->description = $this->get_option('description');
@@ -671,7 +671,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 				// first check status, take appropriate action
 				if (strtolower($msg['status']) == strtolower(PS_ERROR)) {
-					wc_add_notice(__("Failed to initiate Transaction " . $msg['error'], 'woocommerce'), 'error');
+					wc_add_notice(__("Initiate Payment Error: " . $msg['error'], 'woocommerce'), 'error');
 					error_log("Failed to initiate Transaction " . $msg['error']);
 					wp_redirect($checkout_url);
 					exit;

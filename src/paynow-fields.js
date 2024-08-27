@@ -4,21 +4,21 @@ import { getSetting } from '@woocommerce/settings';
 const PaynowPaymentFields = (props) => {
     const [currency, setCurrency] = useState('');
     const [plugin_url, setPluginUrl] = useState('');
-    const [PaynowPaymentMethod, setPaymentMethod] = useState("");
+    const [PaynowPaymentMethod, setPaymentMethod] = useState("paynow");
     const [PaynowAuthEmail, setAuthEmail] = useState("");
     const [PaynowPaymentMobileNumber, setMobileNo] = useState("");
     const [showEcocashMobileNumber, setShowEcocashMobileNumber] = useState(false);
     const [showPaynowEmail, setShowPaynowEmail] = useState(true);
     const { eventRegistration, emitResponse } = props;
-    const { onPaymentProcessing } = eventRegistration;
+    const { onPaymentSetup } = eventRegistration;
     useEffect(() => {
         const settings = getSetting('paynow_data', {});
         const currency = settings.currency; // assuming currency is stored in paynow_data settings
         setPluginUrl(settings.plugin_url)
         setCurrency(currency);
-        const unsubscribe = onPaymentProcessing(async () => {
+        const unsubscribe = onPaymentSetup(async () => {
 
-        
+
 
             if (!PaynowPaymentMethod.length) {
                 return {
@@ -39,7 +39,7 @@ const PaynowPaymentFields = (props) => {
                     message: 'Please fill in Paynow Mobile Number ',
                 };
             }
-        
+
                 return {
                     type: emitResponse.responseTypes.SUCCESS,
                     meta: {
@@ -51,9 +51,9 @@ const PaynowPaymentFields = (props) => {
                         },
                     },
                 };
-            
 
-          
+
+
         });
         return () => {
             unsubscribe();
@@ -66,8 +66,7 @@ const PaynowPaymentFields = (props) => {
 
         emitResponse.responseTypes.ERROR,
         emitResponse.responseTypes.SUCCESS,
-        onPaymentProcessing,
-
+        onPaymentSetup
     ]);
 
     const handlePaymentMethodChange = (event) => {
@@ -99,7 +98,7 @@ const PaynowPaymentFields = (props) => {
                 <span className="woocommerce-input-wrapper">
                     <div className="paynow-d-flex">
                         <div className="paynow_ecocash_onemoney_method">
-                            <input type="radio" className="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio paynow_inline" value="ecocash_onemoney" name="paynow_payment_method" id="paynow_payment_method_ecocash_onemoney" onChange={handlePaymentMethodChange} />
+                            <input type="radio" className="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio paynow_inline" value="ecocash_onemoney" name="paynow_payment_method" id="paynow_payment_method_ecocash_onemoney" onChange={handlePaymentMethodChange} onInput={handlePaymentMethodChange} checked={PaynowPaymentMethod === 'ecocash_onemoney'} />
                             <label htmlFor="paynow_payment_method_ecocash_onemoney" className="radio woocommerce-form__label woocommerce-form__label-for-radio inline paynow_inline"> Mobile Money Express
                                 <br />
 
@@ -110,7 +109,7 @@ const PaynowPaymentFields = (props) => {
                         </div>
                         {currency === 'USD' && (
                             <div className="paynow_innbucks">
-                                <input type="radio" className="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio  paynow_inline" value="innbucks" name="paynow_payment_method" id="paynow_payment_method_innbucks" onChange={handlePaymentMethodChange} />
+                                <input type="radio" className="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio  paynow_inline" value="innbucks" name="paynow_payment_method" id="paynow_payment_method_innbucks" onChange={handlePaymentMethodChange} onInput={handlePaymentMethodChange} checked={PaynowPaymentMethod === 'innbucks'} />
                                 <label htmlFor="paynow_payment_method_innbucks" className="radio woocommerce-form__label woocommerce-form__label-for-radio inline paynow_inline">Innbucks Express
                                     <br />
                                     <img className="paynow-badges paynow-badge" src={`${plugin_url}/assets/images/Innbucks_Badge.svg`} alt="Innbucks Badge" />
@@ -118,7 +117,7 @@ const PaynowPaymentFields = (props) => {
                             </div>
                         )}
                         <div className="paynow_paynow">
-                            <input type="radio" className="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio paynow_inline" value="paynow" name="paynow_payment_method" id="paynow_payment_method_paynow" onChange={handlePaymentMethodChange} />
+                            <input type="radio" className="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio paynow_inline" value="paynow" name="paynow_payment_method" id="paynow_payment_method_paynow" onChange={handlePaymentMethodChange} onInput={handlePaymentMethodChange} checked={PaynowPaymentMethod === 'paynow'}/>
                             <label htmlFor="paynow_payment_method_paynow" className="radio woocommerce-form__label woocommerce-form__label-for-radio inline paynow_inline">Paynow<span style={{ fontSize: '13px' }}> (All supported payment channels)</span>
                                 <br />
                                 <img className="" style={{ marginLeft: '28px', maxWidth: '115px' }} src={`${plugin_url}/assets/images/paynow-badge.png`} alt="Paynow Badge" />

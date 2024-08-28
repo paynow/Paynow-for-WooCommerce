@@ -5,7 +5,7 @@
  *	Plugin URI: https://developers.paynow.co.zw/docs/woocommerce.html
  *	Description: A payment gateway for Zimbabwean payment system, Paynow for Woocommerce.
  *	Author: Paynow Zimbabwe
- *	Version: 1.3.3
+ *	Version: 1.3.4
  *	Author URI: https://www.paynow.co.zw/
  *	Requires at least: 3.5
  *	Tested up to: 4.1
@@ -30,8 +30,8 @@ function woocommerce_paynow_init()
 {
 	load_plugin_textdomain('wc_paynow', false, trailingslashit(dirname(plugin_basename(__FILE__))));
 
-	/** Check if woocommerce is installed and available for use 
-	 * 
+	/** Check if woocommerce is installed and available for use
+	 *
 	 * @since 1.0.0
 	 */
 	$active_plugins = apply_filters('active_plugins', get_option('active_plugins', array()));
@@ -53,9 +53,9 @@ function woocommerce_paynow_init()
 	{
 
 
-		/** 
+		/**
 		 * Get Paynow instance
-		 * 
+		 *
 		 * @var Singleton The reference the *Singleton* instance of this class
 		 */
 		private static $instance;

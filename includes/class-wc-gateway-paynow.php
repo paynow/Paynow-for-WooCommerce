@@ -183,8 +183,10 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		add_action('woocommerce_after_checkout_validation', array($this, 'validate_payment_fields'), 10, 2);
 
 
-		wp_register_style('paynow-style', $this->plugin_url() . '/assets/css/paynow-style.css');
-		add_action('wp_enqueue_scripts',  array($this, 'paynow_enqueue_script'));
+		wp_register_style( 'paynow-style', WC_Paynow::plugin_url() . '/assets/css/paynow-style.css' );
+
+		// Block based checkout doesn't need this script so commenting out the code.
+		// add_action('wp_enqueue_scripts',  array($this, 'paynow_enqueue_script'));
 
 		add_action('woocommerce_receipt_paynow', array($this, 'receipt_page'));
 
@@ -724,7 +726,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				wp_redirect($checkout_url);
 				exit;
 			} else {
-				// redirect user to paynow 
+				// redirect user to paynow
 
 				if ('paynow' == $paynow_payment_method) {
 					wp_redirect($theProcessUrl);
@@ -737,7 +739,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 
 	/**
-	 * Show express checkout 
+	 * Show express checkout
 	 */
 	public function paynow_express_checkout($order, $body, $method, $ReturnUrl)
 	{
@@ -1067,7 +1069,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		?>
 		<script>
 			// so that we limit the number of tries incase there is an issue.
-			// var tries = 0; 
+			// var tries = 0;
 
 			// var overlay = document.createElement('div');
 
@@ -1182,7 +1184,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				$validateHash = (new WC_Paynow_Helper())->CreateHash($msg, $MerchantKey);
 
 				if ($validateHash != $msg['hash']) {
-					// hashes do not match 
+					// hashes do not match
 					// look at throwing clean errors
 					return WP_REST_Response(["message" => "Invalid Hash"], 401);
 				} else {
@@ -1284,6 +1286,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 	public function paynow_enqueue_script()
 	{
-		wp_enqueue_script('my-js',  $this->plugin_url() . '/assets/js/paynow-js.js', array('jquery'), $this->version, true);
+		$src = WC_Paynow::plugin_url() . '/assets/js/paynow-js.js';
+		wp_enqueue_script( 'paynow-js', $src , ['jquery'], $this->version, true );
 	}
 } // End Class

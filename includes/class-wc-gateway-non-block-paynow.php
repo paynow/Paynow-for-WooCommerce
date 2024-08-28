@@ -51,7 +51,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 		$this->initiate_transaction_url =  PAYNOW_INITIATE_TRANSACTION_URL;
 		$this->initiate_remote_transaction_url = PAYNOW_INITIATE_REMOTE_TRANSACTION_URL;
-		
+
 		$this->title = $this->settings['title'];
 
 		// this is the url paynow will send it's response to
@@ -216,7 +216,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	 */
 	public function admin_options()
 	{
-		
+
 ?>
 		<h3>
 			<?php /* translators: %s: Paynow */ ?>
@@ -573,7 +573,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				wp_redirect($checkout_url);
 				exit;
 			} else {
-				// redirect user to paynow 
+				// redirect user to paynow
 
 				if ('paynow' == $paynow_payment_method) {
 					wp_redirect($theProcessUrl);
@@ -586,7 +586,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 
 	/**
-	 * Show express checkout 
+	 * Show express checkout
 	 */
 	public function paynow_express_checkout($order, $body, $method, $ReturnUrl)
 	{
@@ -696,7 +696,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		?>
 		<script>
 			// so that we limit the number of tries incase there is an issue.
-			// var tries = 0; 
+			// var tries = 0;
 
 			// var overlay = document.createElement('div');
 
@@ -810,7 +810,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				$validateHash = (new WC_Paynow_Helper())->CreateHash($msg, $MerchantKey);
 
 				if ($validateHash != $msg['hash']) {
-					// hashes do not match 
+					// hashes do not match
 					// look at throwing clean errors
 					exit;
 				} else {
@@ -912,6 +912,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 	public function paynow_enqueue_script()
 	{
-		wp_enqueue_script('my-js',  $this->plugin_url() . '/assets/js/paynow-js.js', array('jquery'),$this->version, true);
+		$src = WC_Paynow::plugin_url() . '/assets/js/paynow-js.js';
+		wp_enqueue_script( 'paynow-js',  $src, ['jquery'], $this->version, true );
 	}
 } // End Class

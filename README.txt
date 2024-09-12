@@ -1,8 +1,8 @@
 === Paynow Zimbabwe Payment Gateway ===
 Contributors: webdevprojects
 Tags: Paynow, Woocommerce
-Requires at least: 6.3
-Tested up to: 6.0
+Requires at least: 4.7
+Tested up to: 6.3
 Stable tag: 1.3.4
 Requires PHP: 7.0
 License: GPLv2 or later

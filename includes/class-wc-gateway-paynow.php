@@ -665,6 +665,13 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 			// send API post request
 			$response = wp_remote_request($url, $response_fields);
 
+			if ( is_wp_error( $response ) ) {
+				wc_add_notice( __( "Something went wrong with processing payment. Please try again or contact us.", 'woocommerce' ), 'error') ;
+				error_log( "Failed to initiate Transaction " . $response->get_error_message() );
+				wp_redirect( $checkout_url );
+				exit;
+			}
+
 			// get the response from paynow
 			$result = $response['body'];
 

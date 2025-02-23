@@ -2,7 +2,7 @@
 //Define Constants
 // Define Constants if not defined already
 if (!defined('WC_PAYNOW_VERSION')) {
-	define('WC_PAYNOW_VERSION', '1.3.4');
+	define('WC_PAYNOW_VERSION', '1.3.5');
 }
 
 if (!defined('PS_ERROR')) {

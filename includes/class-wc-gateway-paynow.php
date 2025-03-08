@@ -607,7 +607,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 
 			$ConfirmUrl =  $listener_url;
-			$ReturnUrl = $return_url;
+			$ReturnUrl = filter_var($return_url, FILTER_VALIDATE_URL) ? $return_url : home_url($return_url);
 			$Reference = 'Order Number: ' . $order->get_order_number();
 			$Amount = $order->get_total();
 			$AdditionalInfo = '';
@@ -724,7 +724,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				wp_redirect($checkout_url);
 				exit;
 			} else {
-				// redirect user to paynow 
+				// redirect user to paynow
 
 				if ('paynow' == $paynow_payment_method) {
 					wp_redirect($theProcessUrl);
@@ -737,7 +737,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 
 	/**
-	 * Show express checkout 
+	 * Show express checkout
 	 */
 	public function paynow_express_checkout($order, $body, $method, $ReturnUrl)
 	{
@@ -1067,7 +1067,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		?>
 		<script>
 			// so that we limit the number of tries incase there is an issue.
-			// var tries = 0; 
+			// var tries = 0;
 
 			// var overlay = document.createElement('div');
 
@@ -1182,7 +1182,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				$validateHash = (new WC_Paynow_Helper())->CreateHash($msg, $MerchantKey);
 
 				if ($validateHash != $msg['hash']) {
-					// hashes do not match 
+					// hashes do not match
 					// look at throwing clean errors
 					return WP_REST_Response(["message" => "Invalid Hash"], 401);
 				} else {

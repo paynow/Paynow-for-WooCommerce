@@ -8,7 +8,7 @@
  *	Version: 1.3.4
  *	Author URI: https://www.paynow.co.zw/
  *	Requires at least: 3.5
- *	Tested up to: 4.1
+ *	Tested up to: 6.7
  */
 
 add_action('plugins_loaded', 'woocommerce_paynow_init');
@@ -121,7 +121,7 @@ function woocommerce_paynow_init()
 			add_filter('woocommerce_payment_gateways', array($this, 'woocommerce_paynow_add_gateway'));
 			add_action('woocommerce_thankyou', array($this, 'order_cancelled_redirect'), 10, 1);
 
-	
+
 			add_action('rest_api_init', function () {
 				register_rest_route('wc-paynow-express/v1', '/order/(?P<id>\d+)', array(
 					'methods' => 'POST',

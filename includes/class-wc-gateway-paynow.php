@@ -137,7 +137,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		$this->available_countries = array('ZW');
 
 		// Setup available currency codes.
-		$this->available_currencies = array('USD', 'ZIG'); // nostro / rtgs ?
+		$this->available_currencies = array('USD', 'ZIG'); // USD / ZIG ?
 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -184,7 +184,6 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 
 		wp_register_style('paynow-style', $this->plugin_url() . '/assets/css/paynow-style.css');
-		add_action('wp_enqueue_scripts',  array($this, 'paynow_enqueue_script'));
 
 		add_action('woocommerce_receipt_paynow', array($this, 'receipt_page'));
 
@@ -1282,8 +1281,5 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		return json_encode($data);
 	} //End of wc_express_check_status
 
-	public function paynow_enqueue_script()
-	{
-		wp_enqueue_script('my-js',  $this->plugin_url() . '/assets/js/paynow-js.js', array('jquery'), $this->version, true);
-	}
+
 } // End Class

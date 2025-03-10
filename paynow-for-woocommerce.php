@@ -9,9 +9,9 @@
  *	Author URI: https://www.paynow.co.zw/
  *	Requires at least: 3.5
  *	Tested up to: 6.7
-  * License: GPLv2 or later
- * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: paynow
+ * 	License: GPLv2 or later
+ * 	License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * 	Text Domain: paynow
  */
 
 add_action('plugins_loaded', 'woocommerce_paynow_init');

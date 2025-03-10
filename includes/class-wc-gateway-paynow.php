@@ -1113,30 +1113,33 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	 * @since 1.0.0
 	 */
 
-	public function log($message, $close = false)
-	{
+	 public function log($message, $close = false)
+	 {
+		 global $wp_filesystem;
 
-		static $fh = 0;
+		 if (empty($wp_filesystem)) {
+			 require_once ABSPATH . '/wp-admin/includes/file.php';
+			 WP_Filesystem();
+		 }
 
-		if ($close) {
-			@fclose($fh);
-		} else {
-			// If file doesn't exist, create it
-			if (!$fh) {
-				$pathinfo = pathinfo(__FILE__);
-				$dir = str_replace('/includes', '/logs', $pathinfo['dirname']);
-				$fh = @fopen($dir . '/paynow.log', 'a+');
-			}
+		 $upload_dir = wp_upload_dir();
+		 $log_dir = trailingslashit($upload_dir['basedir']) . 'paynow-logs';
 
-			// If file was successfully created
-			if ($fh) {
-				$line = $message . "\n";
+		 if (!file_exists($log_dir)) {
+			 wp_mkdir_p($log_dir);
+		 }
 
-				fwrite($fh, $line);
-			}
-		}
-	} // End log()
+		 $log_file = trailingslashit($log_dir) . 'paynow.log';
 
+		 $existing_log = '';
+		 if ($wp_filesystem->exists($log_file)) {
+			 $existing_log = $wp_filesystem->get_contents($log_file);
+		 }
+
+		 $new_entry = date('Y-m-d H:i:s') . " - " . $message . "\n";
+
+		 $wp_filesystem->put_contents($log_file, $existing_log . $new_entry, FS_CHMOD_FILE);
+	 }
 
 	/**
 	 * Process notify from Paynow

@@ -1,5 +1,9 @@
 *** Paynow Changelog***
 
+2025-03-07 - version 1.3.4
+* Remove automatic detection for WooCommerce  blocks
+* This branch now only support short code checkout
+
 2023-10-09 - version 1.3.2
 * Added support for express checkout with mobile wallets like Ecocash, One Money and innbucks
 

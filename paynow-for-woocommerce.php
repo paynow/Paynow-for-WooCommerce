@@ -5,10 +5,13 @@
  *	Plugin URI: https://developers.paynow.co.zw/docs/woocommerce.html
  *	Description: A payment gateway for Zimbabwean payment system, Paynow for Woocommerce.
  *	Author: Paynow Zimbabwe
- *	Version: 1.3.3
+ *	Version: 1.3.4
  *	Author URI: https://www.paynow.co.zw/
  *	Requires at least: 3.5
- *	Tested up to: 4.1
+ *	Tested up to: 6.7
+ * 	License: GPLv2 or later
+ * 	License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * 	Text Domain: paynow
  */
 
 add_action('plugins_loaded', 'woocommerce_paynow_init');
@@ -30,8 +33,8 @@ function woocommerce_paynow_init()
 {
 	load_plugin_textdomain('wc_paynow', false, trailingslashit(dirname(plugin_basename(__FILE__))));
 
-	/** Check if woocommerce is installed and available for use 
-	 * 
+	/** Check if woocommerce is installed and available for use
+	 *
 	 * @since 1.0.0
 	 */
 	$active_plugins = apply_filters('active_plugins', get_option('active_plugins', array()));
@@ -53,9 +56,9 @@ function woocommerce_paynow_init()
 	{
 
 
-		/** 
+		/**
 		 * Get Paynow instance
-		 * 
+		 *
 		 * @var Singleton The reference the *Singleton* instance of this class
 		 */
 		private static $instance;
@@ -88,11 +91,7 @@ function woocommerce_paynow_init()
 
 		public function init()
 		{
-			if (WC_Blocks_Utils::has_block_in_page(wc_get_page_id('checkout'), 'woocommerce/checkout')) {
-				include_once __DIR__ . '/includes/class-wc-gateway-paynow.php';
-			} else {
-				include_once __DIR__ . '/includes/class-wc-gateway-non-block-paynow.php';
-			}
+			include_once __DIR__ . '/includes/class-wc-gateway-paynow.php';
 			include_once __DIR__ . '/includes/class-wc-gateway-paynow-helper.php';
 			include_once __DIR__ . '/includes/constants.php';
 

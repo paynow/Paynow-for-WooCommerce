@@ -137,7 +137,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		$this->available_countries = array('ZW');
 
 		// Setup available currency codes.
-		$this->available_currencies = array('USD', 'ZIG'); // nostro / rtgs ?
+		$this->available_currencies = array('USD', 'ZIG'); // USD / ZIG ?
 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -184,7 +184,6 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 
 		wp_register_style('paynow-style', $this->plugin_url() . '/assets/css/paynow-style.css');
-		add_action('wp_enqueue_scripts',  array($this, 'paynow_enqueue_script'));
 
 		add_action('woocommerce_receipt_paynow', array($this, 'receipt_page'));
 
@@ -607,7 +606,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 
 			$ConfirmUrl =  $listener_url;
-			$ReturnUrl = $return_url;
+			$ReturnUrl = filter_var($return_url, FILTER_VALIDATE_URL) ? $return_url : home_url($return_url);
 			$Reference = 'Order Number: ' . $order->get_order_number();
 			$Amount = $order->get_total();
 			$AdditionalInfo = '';
@@ -724,7 +723,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				wp_redirect($checkout_url);
 				exit;
 			} else {
-				// redirect user to paynow 
+				// redirect user to paynow
 
 				if ('paynow' == $paynow_payment_method) {
 					wp_redirect($theProcessUrl);
@@ -737,7 +736,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 
 	/**
-	 * Show express checkout 
+	 * Show express checkout
 	 */
 	public function paynow_express_checkout($order, $body, $method, $ReturnUrl)
 	{
@@ -1067,7 +1066,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		?>
 		<script>
 			// so that we limit the number of tries incase there is an issue.
-			// var tries = 0; 
+			// var tries = 0;
 
 			// var overlay = document.createElement('div');
 
@@ -1114,30 +1113,33 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	 * @since 1.0.0
 	 */
 
-	public function log($message, $close = false)
-	{
+	 public function log($message, $close = false)
+	 {
+		 global $wp_filesystem;
 
-		static $fh = 0;
+		 if (empty($wp_filesystem)) {
+			 require_once ABSPATH . '/wp-admin/includes/file.php';
+			 WP_Filesystem();
+		 }
 
-		if ($close) {
-			@fclose($fh);
-		} else {
-			// If file doesn't exist, create it
-			if (!$fh) {
-				$pathinfo = pathinfo(__FILE__);
-				$dir = str_replace('/includes', '/logs', $pathinfo['dirname']);
-				$fh = @fopen($dir . '/paynow.log', 'a+');
-			}
+		 $upload_dir = wp_upload_dir();
+		 $log_dir = trailingslashit($upload_dir['basedir']) . 'paynow-logs';
 
-			// If file was successfully created
-			if ($fh) {
-				$line = $message . "\n";
+		 if (!file_exists($log_dir)) {
+			 wp_mkdir_p($log_dir);
+		 }
 
-				fwrite($fh, $line);
-			}
-		}
-	} // End log()
+		 $log_file = trailingslashit($log_dir) . 'paynow.log';
 
+		 $existing_log = '';
+		 if ($wp_filesystem->exists($log_file)) {
+			 $existing_log = $wp_filesystem->get_contents($log_file);
+		 }
+
+		 $new_entry = date('Y-m-d H:i:s') . " - " . $message . "\n";
+
+		 $wp_filesystem->put_contents($log_file, $existing_log . $new_entry, FS_CHMOD_FILE);
+	 }
 
 	/**
 	 * Process notify from Paynow
@@ -1182,7 +1184,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				$validateHash = (new WC_Paynow_Helper())->CreateHash($msg, $MerchantKey);
 
 				if ($validateHash != $msg['hash']) {
-					// hashes do not match 
+					// hashes do not match
 					// look at throwing clean errors
 					return WP_REST_Response(["message" => "Invalid Hash"], 401);
 				} else {
@@ -1282,8 +1284,5 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		return json_encode($data);
 	} //End of wc_express_check_status
 
-	public function paynow_enqueue_script()
-	{
-		wp_enqueue_script('my-js',  $this->plugin_url() . '/assets/js/paynow-js.js', array('jquery'), $this->version, true);
-	}
+
 } // End Class

@@ -1077,7 +1077,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 						method: 'POST'
 					};
 
-					fetch('/wp-json/wc-paynow-express/v1/order/<?php echo $order_id; ?>', params)
+					fetch('<?php echo esc_url(rest_url('wc-paynow-express/v1/order/' . $order_id)); ?>', params)
 						.then(function(res) {
 
 							return res.json();

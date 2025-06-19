@@ -4,6 +4,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { getSetting } from '@woocommerce/settings';
 import { registerCheckoutBlock } from '@woocommerce/blocks-checkout';
 import PaynowCheckoutFields from './paynow-fields';
+import './index.scss';
 const settings = getSetting( 'paynow_data', {} );
 
 const defaultLabel = __(

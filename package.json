@@ -3,9 +3,9 @@
 	"version": "1.3.4",
 	"author": "Paynow Zimbabwe",
 	"license": "GPL-3.0+",
-	"main": "build/index.js",
-	"scripts": {
-		"build": "wp-scripts build",
+	"main": "build/index.js",	"scripts": {
+		"build": "wp-scripts build && npm run copy-css",
+		"copy-css": "node -e \"require('fs').copyFileSync('build/index.css', 'assets/css/paynow-style.css')\"",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",

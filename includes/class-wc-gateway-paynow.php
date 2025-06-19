@@ -181,13 +181,23 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		//add_filter('woocommerce_gateway_description', array($this, 'add_paynow_custom_checkout_fields'), 20,2);
 
 		add_action('woocommerce_after_checkout_validation', array($this, 'validate_payment_fields'), 10, 2);
-
-
 		wp_register_style('paynow-style', $this->plugin_url() . '/assets/css/paynow-style.css');
+		wp_register_script('paynow-checkout-js', $this->plugin_url() . '/assets/js/paynow-js.js', array('jquery'), '1.3.4', true);
 
 		add_action('woocommerce_receipt_paynow', array($this, 'receipt_page'));
 
 		wp_enqueue_style('paynow-style');
+		
+		// Enqueue script on checkout and admin pages
+		if (is_checkout() || is_admin()) {
+			wp_enqueue_script('paynow-checkout-js');
+		}
+		
+		// Also add script enqueuing hook for frontend
+		add_action('wp_enqueue_scripts', array($this, 'enqueue_checkout_scripts'));
+		
+		// Preload badge images to prevent 404 errors during AJAX updates
+		add_action('wp_head', array($this, 'preload_badge_images'));
 
 		// Check if the base currency supports this gateway.
 		if (!$this->is_valid_for_use()) {
@@ -476,74 +486,151 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	/**
 	 * Add Payment fields for Paynow
 	 */
-
 	public function add_paynow_custom_checkout_fields()
 	{
-		//  if("paynow" === $payment_id){
-		//     ob_start();
-	?>
+		?>
 		<div id="paynow_custom_checkout_field" class="paynow_express_payment_mobile">
-			<h3>Payment Channels</h3>
-			<small>Please select how you want to pay.</small>
-			<p class="form-row form-row-wide custom-radio-group paynow_payment_method" id="paynow_payment_method_field" data-priority="">
-				<span class="woocommerce-input-wrapper">
-					<div class="paynow-d-flex">
+			<h3>Choose Your Payment Method</h3>
+			<small>Select how you'd like to complete your payment securely.</small>
+			
+			<fieldset class="paynow-payment-methods">
+				<legend class="screen-reader-text">Payment Method Selection</legend>
+				<div class="paynow-d-flex" role="radiogroup" aria-labelledby="paynow-payment-heading">
 
-						<div class="paynow_ecocash_onemoney_method">
-							<input type="radio" class="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio" value="ecocash_onemoney" name="paynow_payment_method" id="paynow_payment_method_ecocash_onemoney">
-							<label for="paynow_payment_method_ecocash_onemoney" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline"> Mobile Money Express
-								<br />
-								<img class="paynow-badges paynow-badge" src="<?php echo $this->plugin_url() . '/assets/images/ecocash-badge.svg' ?>" alt="Ecocash Badge">
-								<img class="paynow-badge" src="<?php echo $this->plugin_url() . '/assets/images/onemoney-badge.svg' ?>" alt="One Money Badge">
+					<div class="paynow_ecocash_onemoney_method" role="radio" aria-checked="false" tabindex="0">
+						<input type="radio" 
+							   class="input-radio woocommerce-form__input woocommerce-form__input-radio paynow_payment_methods_radio" 
+							   value="ecocash_onemoney" 
+							   name="paynow_payment_method" 
+							   id="paynow_payment_method_ecocash_onemoney"
+							   aria-describedby="mobile-money-desc">
+						<label for="paynow_payment_method_ecocash_onemoney" class="payment-method-label">
+							Mobile Money Express
+							<span id="mobile-money-desc">Pay instantly with EcoCash or OneMoney</span>							<div class="paynow-badges">
+								<img class="paynow-badge" 
+									 src="<?php echo $this->plugin_url() . '/assets/images/ecocash-badge.svg' ?>" 
+									 alt="EcoCash supported" 
+									 loading="lazy"
+									 onerror="this.style.display='none'">
+								<img class="paynow-badge" 
+									 src="<?php echo $this->plugin_url() . '/assets/images/onemoney-badge.svg' ?>" 
+									 alt="OneMoney supported" 
+									 loading="lazy"
+									 onerror="this.style.display='none'">
+							</div>
+						</label>
+					</div>
 
+					<?php
+					$currency = get_woocommerce_currency();
+					if ('USD' == $currency) {
+					?>
+						<div class="paynow_innbucks" role="radio" aria-checked="false" tabindex="0">
+							<input type="radio" 
+								   class="input-radio woocommerce-form__input woocommerce-form__input-radio paynow_payment_methods_radio" 
+								   value="innbucks" 
+								   name="paynow_payment_method" 
+								   id="paynow_payment_method_innbucks"
+								   aria-describedby="innbucks-desc">
+							<label for="paynow_payment_method_innbucks" class="payment-method-label">
+								Innbucks Express
+								<span id="innbucks-desc">Fast and secure USD payments</span>								<div class="paynow-badges">
+									<img class="paynow-badge" 
+										 src="<?php echo $this->plugin_url() . '/assets/images/Innbucks_Badge.svg' ?>" 
+										 alt="Innbucks supported" 
+										 loading="lazy"
+										 onerror="this.style.display='none'">
+								</div>
 							</label>
 						</div>
-						<?php
-						$currency = get_woocommerce_currency();
-						if ('USD' == $currency) {
+					<?php } ?>
 
-						?>
-							<div class="paynow_innbucks">
-								<input type="radio" class="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio" value="innbucks" name="paynow_payment_method" id="paynow_payment_method_innbucks">
-								<label for="paynow_payment_method_innbucks" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline">Innbucks Express
-									<br />
-									<img class="paynow-badges paynow-badge" src="<?php echo $this->plugin_url() . '/assets/images/Innbucks_Badge.svg' ?>" alt="Innbucks Badge">
-
-								</label>
+					<div class="paynow_paynow" role="radio" aria-checked="false" tabindex="0">
+						<input type="radio" 
+							   class="input-radio woocommerce-form__input woocommerce-form__input-radio paynow_payment_methods_radio" 
+							   value="paynow" 
+							   name="paynow_payment_method" 
+							   id="paynow_payment_method_paynow"
+							   aria-describedby="paynow-desc">
+						<label for="paynow_payment_method_paynow" class="payment-method-label">
+							Paynow Gateway
+							<span id="paynow-desc">All supported payment channels including cards and mobile money</span>							<div class="paynow-badges">
+								<img class="paynow-badge" 
+									 src="<?php echo $this->plugin_url() . '/assets/images/paynow-badge.png' ?>" 
+									 alt="Paynow - All payment methods supported" 
+									 loading="lazy"
+									 onerror="this.style.display='none'">
 							</div>
-						<?php } ?>
-
-						<div class="paynow_paynow">
-
-							<input type="radio" class="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio" value="paynow" name="paynow_payment_method" id="paynow_payment_method_paynow">
-							<label for="paynow_payment_method_paynow" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline">Paynow<span style="font-size:13px"> (All supported payment channels)</span>
-								<br>
-								<img class="" style="margin-left:28px; max-width:210px" src="<?php echo $this->plugin_url() . '/assets/images/paynow-badge.png' ?>" alt="Ecocash Badge"></label>
-
-						</div>
+						</label>
 					</div>
-				</span>
+				</div>
+			</fieldset>
 
-			</p>
-			<p class="validate-required" id="ecocash_mobile_number_field" data-priority="">
-				<label for="ecocash_mobile_number" class="woocommerce-form__label" style="display: block;">Payment Mobile No&nbsp;<abbr class="required" title="required">*</abbr></label>
-				<span class="woocommerce-input-wrapper">
-					<input type="tel" class="input-text" name="ecocash_mobile_number" id="ecocash_mobile_number" placeholder="" value="" required="required" fdprocessedid="98usig">
-				</span>
-			</p>
-			<p class="validate-required" id="paynow_email" data-priority="">
-				<label for="paynow_auth_email" class="woocommerce-form__label" style="display: block;">Paynow Email&nbsp;<abbr class="required" title="required">*</abbr></label>
-				<span class="woocommerce-input-wrapper">
-					<input type="email" class="input-text" name="paynow_auth_email" id="paynow_auth_email" placeholder="" value="" required="required" fdprocessedid="98usig">
-				</span>
-			</p>
+			<div class="payment-details-section">
+				<div class="validate-required" id="ecocash_mobile_number_field" data-priority="" style="display: none;">
+					<label for="ecocash_mobile_number" class="woocommerce-form__label">
+						<span class="label-text">Mobile Number</span>
+						<abbr class="required" title="required">*</abbr>
+					</label>
+					<span class="woocommerce-input-wrapper">
+						<input type="tel" 
+							   class="input-text wc-enhanced-select" 
+							   name="ecocash_mobile_number" 
+							   id="ecocash_mobile_number" 
+							   placeholder="e.g., +263771234567" 
+							   value="" 
+							   required="required"
+							   pattern="[+]?[0-9\s\-\(\)]+"
+							   aria-describedby="mobile-help-text">
+						<small id="mobile-help-text" class="help-text">Enter your mobile money number</small>
+					</span>
+				</div>
 
+				<div class="validate-required" id="paynow_email" data-priority="" style="display: none;">
+					<label for="paynow_auth_email" class="woocommerce-form__label">
+						<span class="label-text">Email Address</span>
+						<abbr class="required" title="required">*</abbr>
+					</label>
+					<span class="woocommerce-input-wrapper">
+						<input type="email" 
+							   class="input-text" 
+							   name="paynow_auth_email" 
+							   id="paynow_auth_email" 
+							   placeholder="your@email.com" 
+							   value="" 
+							   required="required"
+							   aria-describedby="email-help-text">
+						<small id="email-help-text" class="help-text">This will be used for payment confirmation</small>
+					</span>
+				</div>
+			</div>
 		</div>
-	<?php
 
-		//  $description .= ob_get_clean(); // Append buffered content
-		//      }
-		//      return $description."Gateway is  ". $payment_id;
+		<style>
+			.screen-reader-text {
+				clip: rect(1px, 1px, 1px, 1px);
+				position: absolute !important;
+				height: 1px;
+				width: 1px;
+				overflow: hidden;
+			}
+			
+			.payment-details-section {
+				margin-top: 20px;
+			}
+			
+			.help-text {
+				color: #6b7280;
+				font-size: 0.85em;
+				margin-top: 4px;
+				display: block;
+			}
+			
+			.label-text {
+				font-weight: 600;
+			}
+		</style>
+	<?php
 	}
 
 	/**
@@ -1292,9 +1379,30 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				}
 			}
 		}
-
 		return json_encode($data);
 	} //End of wc_express_check_status
+	/**
+	 * Enqueue checkout scripts on appropriate pages
+	 */
+	public function enqueue_checkout_scripts() {
+		// Only enqueue on checkout page or pages that contain our payment fields
+		if (is_checkout() || (is_woocommerce() && $this->is_available())) {
+			wp_enqueue_script('paynow-checkout-js');
+		}
+	}
 
-
-} // End Class
+	/**
+	 * Preload badge images to prevent 404 errors during AJAX updates
+	 */
+	public function preload_badge_images() {
+		if (is_checkout() || is_wc_endpoint_url('order-pay')) {
+			$plugin_url = $this->plugin_url();
+			echo '<link rel="preload" href="' . $plugin_url . '/assets/images/ecocash-badge.svg" as="image" type="image/svg+xml">';
+			echo '<link rel="preload" href="' . $plugin_url . '/assets/images/onemoney-badge.svg" as="image" type="image/svg+xml">';
+			echo '<link rel="preload" href="' . $plugin_url . '/assets/images/paynow-badge.png" as="image" type="image/png">';
+			if (get_woocommerce_currency() === 'USD') {
+				echo '<link rel="preload" href="' . $plugin_url . '/assets/images/Innbucks_Badge.svg" as="image" type="image/svg+xml">';
+			}
+		}
+	}
+} // End class WC_Gateway_Paynow

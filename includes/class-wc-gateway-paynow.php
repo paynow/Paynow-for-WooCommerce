@@ -357,7 +357,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		?>
 			<div class="inline error">
 				<?php /* translators: %s: Disabled Gateway */ ?>
-				<p><strong><?php esc_html_e('Gateway Disabled', 'woothemes'); ?></strong> <?php sprintf(esc_html_e('Choose United States Dollar ($/USD) as your store currency in <a href="%s">Pricing Options</a> to enable the Paynow Gateway.', 'woocommerce'), esc_html_e(admin_url('?page=woocommerce&tab=catalog'))); ?></p>
+				<p><strong><?php esc_html_e('Gateway Disabled', 'woothemes'); ?></strong> <?php printf(esc_html__('Choose United States Dollar ($/USD) as your store currency in <a href="%s">Pricing Options</a> to enable the Paynow Gateway.', 'woocommerce'), esc_url(admin_url('?page=woocommerce&tab=catalog'))); ?></p>
 			</div>
 		<?php
 		} // End check currency
@@ -657,13 +657,21 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 			$response_fields = array(
 				'timeout' => 45,
 				'method' => 'POST',
-				'body' => $fields_string,
-			);
+				'body' => $fields_string,			);
 			// send API post request
 			$response = wp_remote_request($url, $response_fields);
 
+			// Check if the response is an error
+			if (is_wp_error($response)) {
+				$error = 'HTTP request failed: ' . $response->get_error_message();
+				wc_add_notice(__($error, 'woocommerce'), 'error');
+				error_log($error);
+				wp_redirect($checkout_url);
+				exit;
+			}
+
 			// get the response from paynow
-			$result = $response['body'];
+			$result = wp_remote_retrieve_body($response);
 
 			if ($result) {
 				$msg = (new WC_Paynow_Helper())->ParseMsg($result);
@@ -1150,10 +1158,9 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	public function paynow_checkout_return_handler()
 	{
 		global $woocommerce;
-
 		// Check the request method is POST
 		if (isset($_SERVER['REQUEST_METHOD']) && 'POST' != $_SERVER['REQUEST_METHOD']  && !isset($_GET['order_id'])) {
-			return WP_REST_Response(["message" => "Unauthorized"], 401);
+			return new WP_REST_Response(["message" => "Unauthorized"], 401);
 		}
 
 		$order_id = sanitize_text_field($_GET['order_id']);
@@ -1169,11 +1176,16 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				'timeout' => 45,
 				'method' => 'POST',
 				'body' => '',
-			);
-			//execute post
+			);			//execute post
 			$response = wp_remote_request($url, $request_fields);
 
-			$result = $response['body'];
+			// Check if the response is an error
+			if (is_wp_error($response)) {
+				error_log('Paynow poll request failed: ' . $response->get_error_message());
+				return new WP_REST_Response(["message" => "Request failed"], 500);
+			}
+
+			$result = wp_remote_retrieve_body($response);
 
 			if ($result) {
 				$msg = (new WC_Paynow_Helper())->ParseMsg($result);
@@ -1181,12 +1193,10 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				$currency = $order->get_currency();
 
 				$MerchantKey =   'ZIG' == $currency ? $this->merchant_key : $this->forex_merchant_key;
-				$validateHash = (new WC_Paynow_Helper())->CreateHash($msg, $MerchantKey);
-
-				if ($validateHash != $msg['hash']) {
+				$validateHash = (new WC_Paynow_Helper())->CreateHash($msg, $MerchantKey);				if ($validateHash != $msg['hash']) {
 					// hashes do not match
 					// look at throwing clean errors
-					return WP_REST_Response(["message" => "Invalid Hash"], 401);
+					return new WP_REST_Response(["message" => "Invalid Hash"], 401);
 				} else {
 
 					$payment_meta['PollUrl'] = $msg['pollurl'];
@@ -1194,19 +1204,17 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 					$payment_meta['Amount'] = $msg['amount'];
 					$payment_meta['Status'] = $msg['status'];
 
-					update_post_meta($order_id, '_wc_paynow_payment_meta', $payment_meta);
-
-					if (trim(strtolower($msg['status'])) == PS_CANCELLED) {
+					update_post_meta($order_id, '_wc_paynow_payment_meta', $payment_meta);					if (trim(strtolower($msg['status'])) == PS_CANCELLED) {
 						$order->update_status('cancelled',  __('Payment cancelled on Paynow.', 'woothemes'));
 						$order->save();
-						return WP_REST_Response(["message" => "Saved Succesfully"], 200);
+						return new WP_REST_Response(["message" => "Saved Succesfully"], 200);
 					} elseif (trim(strtolower($msg['status'])) == PS_FAILED) {
 						$order->update_status('failed', __('Payment failed on Paynow.', 'woothemes'));
 						$order->save();
-						return WP_REST_Response(["message" => "Saved Succesfully"], 200);
+						return new WP_REST_Response(["message" => "Saved Succesfully"], 200);
 					} elseif (trim(strtolower($msg['status'])) == PS_PAID || trim(strtolower($msg['status'])) == PS_AWAITING_DELIVERY || trim(strtolower($msg['status'])) == PS_DELIVERED) {
 						$order->payment_complete();
-						return WP_REST_Response(["message" => "Saved Succesfully"], 200);
+						return new WP_REST_Response(["message" => "Saved Succesfully"], 200);
 					}
 				}
 			}
@@ -1233,16 +1241,20 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 		if ($payment_meta) {
 
-			$url = $payment_meta["PollUrl"];
-
-			//execute post
+			$url = $payment_meta["PollUrl"];			//execute post
 			$response = wp_remote_request($url, [
 				'timeout' => 45,
 				'method' => 'POST',
 				'body' => ''
 			]);
 
-			$result = $response['body'];
+			// Check if the response is an error
+			if (is_wp_error($response)) {
+				error_log('Paynow express check failed: ' . $response->get_error_message());
+				return json_encode([]);
+			}
+
+			$result = wp_remote_retrieve_body($response);
 
 			if ($result) {
 				$msg = (new WC_Paynow_Helper)->ParseMsg($result);

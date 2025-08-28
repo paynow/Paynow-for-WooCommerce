@@ -33,11 +33,10 @@ const Label = ( props ) => {
  */
 const Paynow = {
 	name: "paynow",
-	label: <img
-	src={ settings.icon }
-	style={{height: "16px"}}
-	alt={ label }
-/>,
+	label: <span style={{display:'inline-flex',alignItems:'center',gap:'8px'}}>
+		<img src={ settings.icon } style={{height: '16px'}} alt={ label } />
+		<span>{ label }</span>
+	</span>,
 	
 	content: <PaynowCheckoutFields />,
 	edit: <PaynowCheckoutFields />,

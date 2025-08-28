@@ -17,9 +17,6 @@ const PaynowPaymentFields = (props) => {
         setPluginUrl(settings.plugin_url)
         setCurrency(currency);
         const unsubscribe = onPaymentProcessing(async () => {
-
-        
-
             if (!PaynowPaymentMethod.length) {
                 return {
                     type: emitResponse.responseTypes.ERROR,
@@ -39,21 +36,39 @@ const PaynowPaymentFields = (props) => {
                     message: 'Please fill in Paynow Mobile Number ',
                 };
             }
-        
-                return {
-                    type: emitResponse.responseTypes.SUCCESS,
-                    meta: {
-                        paymentMethodData: {
-                            PaynowPaymentMethod,
-                            PaynowAuthEmail,
-                            PaynowPaymentMobileNumber
 
-                        },
+            // Validate email format if using Paynow method
+            if (PaynowPaymentMethod == "paynow" && PaynowAuthEmail.length > 0) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(PaynowAuthEmail)) {
+                    return {
+                        type: emitResponse.responseTypes.ERROR,
+                        message: 'Please enter a valid email address',
+                    };
+                }
+            }
+
+            // Validate mobile number format if using mobile money
+            if (PaynowPaymentMethod != "paynow" && PaynowPaymentMobileNumber.length > 0) {
+                const phoneRegex = /^(\+263|0)?[17][0-9]{8}$/;
+                if (!phoneRegex.test(PaynowPaymentMobileNumber.replace(/\s/g, ''))) {
+                    return {
+                        type: emitResponse.responseTypes.ERROR,
+                        message: 'Please enter a valid Zimbabwean mobile number',
+                    };
+                }
+            }
+
+            return {
+                type: emitResponse.responseTypes.SUCCESS,
+                meta: {
+                    paymentMethodData: {
+                        PaynowPaymentMethod,
+                        PaynowAuthEmail,
+                        PaynowPaymentMobileNumber
                     },
-                };
-            
-
-          
+                },
+            };
         });
         return () => {
             unsubscribe();
@@ -98,9 +113,9 @@ const PaynowPaymentFields = (props) => {
             <p className="form-row form-row-wide custom-radio-group paynow_payment_method" id="paynow_payment_method_field" data-priority="">
                 <span className="woocommerce-input-wrapper">
                     <div className="paynow-d-flex">
-                        <div className="paynow_ecocash_onemoney_method">
+                        <div className="paynow_ecocash_onemoney_method paynow_method">
                             <input type="radio" className="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio paynow_inline" value="ecocash_onemoney" name="paynow_payment_method" id="paynow_payment_method_ecocash_onemoney" onChange={handlePaymentMethodChange} />
-                            <label htmlFor="paynow_payment_method_ecocash_onemoney" className="radio woocommerce-form__label woocommerce-form__label-for-radio inline paynow_inline"> Mobile Money Express
+                            <label htmlFor="paynow_payment_method_ecocash_onemoney" className="radio woocommerce-form__label woocommerce-form__label-for-radio inline paynow_inline paynow-option-card"> Mobile Money Express
                                 <br />
 
                                 <img className="paynow-badges paynow-badge" src={`${plugin_url}/assets/images/ecocash-badge.svg`} alt="Ecocash Badge" />
@@ -109,17 +124,17 @@ const PaynowPaymentFields = (props) => {
                             </label>
                         </div>
                         {currency === 'USD' && (
-                            <div className="paynow_innbucks">
+                            <div className="paynow_innbucks paynow_method">
                                 <input type="radio" className="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio  paynow_inline" value="innbucks" name="paynow_payment_method" id="paynow_payment_method_innbucks" onChange={handlePaymentMethodChange} />
-                                <label htmlFor="paynow_payment_method_innbucks" className="radio woocommerce-form__label woocommerce-form__label-for-radio inline paynow_inline">Innbucks Express
+                                <label htmlFor="paynow_payment_method_innbucks" className="radio woocommerce-form__label woocommerce-form__label-for-radio inline paynow_inline paynow-option-card">Innbucks Express
                                     <br />
                                     <img className="paynow-badges paynow-badge" src={`${plugin_url}/assets/images/Innbucks_Badge.svg`} alt="Innbucks Badge" />
                                 </label>
                             </div>
                         )}
-                        <div className="paynow_paynow">
+                        <div className="paynow_paynow paynow_method">
                             <input type="radio" className="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio paynow_inline" value="paynow" name="paynow_payment_method" id="paynow_payment_method_paynow" onChange={handlePaymentMethodChange} />
-                            <label htmlFor="paynow_payment_method_paynow" className="radio woocommerce-form__label woocommerce-form__label-for-radio inline paynow_inline">Paynow<span style={{ fontSize: '13px' }}> (All supported payment channels)</span>
+                            <label htmlFor="paynow_payment_method_paynow" className="radio woocommerce-form__label woocommerce-form__label-for-radio inline paynow_inline paynow-option-card">Paynow<span style={{ fontSize: '13px' }}> (All supported payment channels)</span>
                                 <br />
                                 <img className="" style={{ marginLeft: '28px', maxWidth: '115px' }} src={`${plugin_url}/assets/images/paynow-badge.png`} alt="Paynow Badge" />
                             </label>

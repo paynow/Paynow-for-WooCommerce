@@ -16,7 +16,27 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 {
 
 
-	public $version = WC_PAYNOW_VERSION;
+		public $version = WC_PAYNOW_VERSION;
+		public $id;
+		public $method_title;
+		public $method_description;
+		public $icon;
+		public $has_fields;
+		public $callback;
+		public $available_countries;
+		public $available_currencies;
+		public $merchant_id;
+		public $merchant_key;
+		public $forex_merchant_id;
+		public $forex_merchant_key;
+		public $initiate_transaction_url;
+		public $initiate_remote_transaction_url;
+		public $title;
+		public $description;
+		public $response_url;
+		public $plugin_url;
+		public $supports;
+		public $instructions;
 
 	public function __construct()
 	{
@@ -31,10 +51,15 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		$this->callback = strtolower(get_class($this));
 
 		// Setup available countries.
-		$this->available_countries = array('ZW');
 
 		// Setup available currency codes.
 		$this->available_currencies = array('USD', 'ZIG'); // nostro / rtgs ?
+
+		// Initialize supports property to avoid null errors
+		$this->supports = array(
+			'products',
+			'subscriptions',
+		);
 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -51,7 +76,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 		$this->initiate_transaction_url =  PAYNOW_INITIATE_TRANSACTION_URL;
 		$this->initiate_remote_transaction_url = PAYNOW_INITIATE_REMOTE_TRANSACTION_URL;
-		
+
 		$this->title = $this->settings['title'];
 
 		// this is the url paynow will send it's response to
@@ -216,7 +241,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	 */
 	public function admin_options()
 	{
-		
+
 ?>
 		<h3>
 			<?php /* translators: %s: Paynow */ ?>
@@ -291,7 +316,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				<span class="woocommerce-input-wrapper">
 					<div class="paynow-d-flex">
 
-						<div class="paynow_ecocash_onemoney_method">
+						<div class="paynow_ecocash_onemoney_method paynow_method">
 							<input type="radio" class="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio" value="ecocash_onemoney" name="paynow_payment_method" id="paynow_payment_method_ecocash_onemoney">
 							<label for="paynow_payment_method_ecocash_onemoney" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline"> Mobile Money Express
 								<br />
@@ -305,7 +330,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 						if ('USD' == $currency) {
 
 						?>
-							<div class="paynow_innbucks">
+							<div class="paynow_innbucks paynow_method">
 								<input type="radio" class="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio" value="innbucks" name="paynow_payment_method" id="paynow_payment_method_innbucks">
 								<label for="paynow_payment_method_innbucks" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline">Innbucks Express
 									<br />
@@ -315,10 +340,10 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 							</div>
 						<?php } ?>
 
-						<div class="paynow_paynow">
+						<div class="paynow_paynow paynow_method">
 
 							<input type="radio" class="input-radio woocommerce-form__input woocommerce-form__input-radio inline paynow_payment_methods_radio" value="paynow" name="paynow_payment_method" id="paynow_payment_method_paynow">
-							<label for="paynow_payment_method_paynow" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline">Paynow<span style="font-size:13px"> (All supported payment channels)</span>
+							<label for="paynow_payment_method_paynow" class="radio woocommerce-form__label woocommerce-form__label-for-radio inline">Paynow<span style="font-size:10px"> (All supported channels)</span>
 								<br>
 								<img class="" style="margin-left:28px; max-width:115px" src="<?php echo $this->plugin_url() . '/assets/images/paynow-badge.png' ?>" alt="Ecocash Badge"></label>
 
@@ -512,17 +537,20 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 			);
 			// send API post request
 			$response = wp_remote_request($url, $response_fields);
+			if (is_wp_error($response)) {
+				$error = 'Network error: ' . $response->get_error_message();
+			}
 
-			// get the response from paynow
-			$result = $response['body'];
+			$result = is_wp_error($response) ? '' : $response['body'];
 
 			if ($result) {
 				$msg = (new WC_Paynow_Helper())->ParseMsg($result);
 
 				// first check status, take appropriate action
 				if (strtolower($msg['status']) == strtolower(PS_ERROR)) {
-					wc_add_notice(__("Initiate Payment Error: " . $msg['error'], 'woocommerce'), 'error');
-
+					$error_message = isset($msg['error']) ? $msg['error'] : 'Unknown Paynow error';
+					wc_add_notice(__("Initiate Payment Error: " . $error_message, 'woocommerce'), 'error');
+					error_log("Failed to initiate Transaction " . $error_message);
 					wp_redirect($checkout_url);
 					exit;
 				} elseif (strtolower($msg['status']) == strtolower(PS_OK)) {
@@ -573,7 +601,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				wp_redirect($checkout_url);
 				exit;
 			} else {
-				// redirect user to paynow 
+				// redirect user to paynow
 
 				if ('paynow' == $paynow_payment_method) {
 					wp_redirect($theProcessUrl);
@@ -586,7 +614,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 
 	/**
-	 * Show express checkout 
+	 * Show express checkout
 	 */
 	public function paynow_express_checkout($order, $body, $method, $ReturnUrl)
 	{
@@ -667,12 +695,13 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 
 			<div class="wd-loader-wrapper">
-
-
-
 				<div class="wd-loader-content">
 					<div class="paynow-express-loader"></div>
 					<p style="text-align: center; color: #2d3040; font-family: Arial, sans-serif; font-size: 18px">Waiting for mobile money payment. Please check your phone </p>
+					<div id="payment-status" style="text-align: center; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px; max-width: 400px; margin-left: auto; margin-right: auto;">
+						<div id="status-message" style="font-size: 14px; color: #6c757d;">Transaction status: <span id="status">created</span></div>
+						<div id="error-message" style="display: none; color: #dc3545; font-size: 14px; margin-top: 10px;"></div>
+					</div>
 					<div style="font-size: 16px; font-weight: normal; margin-top: 50px;">
 						<div class="dial-number">
 							If you don't get a prompt on your handset
@@ -696,7 +725,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		?>
 		<script>
 			// so that we limit the number of tries incase there is an issue.
-			// var tries = 0; 
+			// var tries = 0;
 
 			// var overlay = document.createElement('div');
 
@@ -707,23 +736,40 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 						method: 'POST'
 					};
 
-					fetch('/wp-json/wc-paynow-express/v1/order/<?php echo $order_id; ?>', params)
-						.then(function(res) {
-
-							return res.json();
+					fetch('/wp-json/paynow/v1/order/<?php echo $order_id; ?>', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded',
+						},
+						body: new URLSearchParams({
+							order_id: '<?php echo $order_id; ?>',
+							_wpnonce: '<?php echo wp_create_nonce('paynow_poll_' . $order_id); ?>'
 						})
-
-						.then(function(res) {
+					})
+						.then(function(res) { return res.json(); })
+						.then(function(data) {
 							try {
-
-								var data = JSON.parse(res);
-
-								console.log(data);
-								if (data.hasOwnProperty('complete')) {
+								if (data && typeof data === 'object' && data.hasOwnProperty('complete')) {
+									if (data.message && document.getElementById('loading-info')) {
+										document.getElementById('loading-info').innerText = data.message;
+									}
+									if (data.status && document.getElementById('status')) {
+										document.getElementById('status').innerText = data.status;
+									}
+									if (data.message && document.getElementById('status-message')) {
+										document.getElementById('status-message').innerText = 'Transaction status: ' + (data.status || 'processing');
+									}
+									if (data.message && document.getElementById('error-message')) {
+										const errorEl = document.getElementById('error-message');
+										if (data.message !== 'Saved Succesfully') {
+											errorEl.style.display = 'block';
+											errorEl.innerText = data.message;
+										} else {
+											errorEl.style.display = 'none';
+										}
+									}
 									if (data.complete) {
 										window.location.replace(data.url);
-									} else {
-										window.location.replace(data.url)
 									}
 								}
 							} catch (e) {}
@@ -810,7 +856,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				$validateHash = (new WC_Paynow_Helper())->CreateHash($msg, $MerchantKey);
 
 				if ($validateHash != $msg['hash']) {
-					// hashes do not match 
+					// hashes do not match
 					// look at throwing clean errors
 					exit;
 				} else {
@@ -848,7 +894,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 		// Check the request method is POST
 		if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'POST' && !isset($request['id'])) {
-			return json_encode($data);
+			return new WP_REST_Response($data, 400);
 		}
 
 		$order_id = $request['id'];
@@ -867,6 +913,10 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				'method' => 'POST',
 				'body' => ''
 			]);
+
+			if (is_wp_error($response)) {
+				return new WP_REST_Response(['complete' => false, 'message' => $response->get_error_message()], 500);
+			}
 
 			$result = $response['body'];
 
@@ -889,6 +939,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				$validateHash = (new WC_Paynow_Helper)->CreateHash($msg, $MerchantKey);
 
 				if ($validateHash != $msg["hash"]) {
+					return new WP_REST_Response(['complete' => false, 'message' => 'Invalid hash'], 401);
 				} else {
 					if (trim(strtolower($msg["status"])) == PS_PAID || trim(strtolower($msg["status"])) == PS_AWAITING_DELIVERY || trim(strtolower($msg["status"])) == PS_DELIVERED) {
 						$data = array(
@@ -907,7 +958,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 			}
 		}
 
-		return json_encode($data);
+		return new WP_REST_Response($data, 200);
 	} //End of wc_express_check_status
 
 	public function paynow_enqueue_script()

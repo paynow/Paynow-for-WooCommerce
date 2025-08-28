@@ -1,13 +1,47 @@
 .paynow-d-flex label {
-    margin-right: 23px;
-    margin-left: 5px;
-    font-size: 16px !important;
+    margin-right: 23px 	!important;
+    margin-left: 5px !important;
+    font-size: 14px !important;
     position: relative;
-    top: 15px;
 }
 .paynow_paynow label {
-    top:25px;
     margin-bottom: 20px;
+}
+/* Card-like option labels that resist theme overrides */
+.paynow-option-card {
+    display: inline-block !important;
+    border: 1px solid #dcdfe6 !important;
+    border-radius: 6px !important;
+    padding: 10px 12px !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+    cursor: pointer !important;
+    background: #fff !important;
+    transition: all 0.2s ease !important;
+    position: relative !important;
+}
+.paynow-option-card:hover {
+    border-color: #2c7be5 !important;
+    box-shadow: 0 2px 8px rgba(44,123,229,0.15) !important;
+    transform: translateY(-1px) !important;
+}
+.paynow-option-card.is-selected {
+    border-color: #2c7be5 !important;
+    box-shadow: 0 0 0 2px rgba(44,123,229,0.15) !important;
+    background: #f8fbff !important;
+}
+.paynow-option-card:focus-within {
+    outline: 2px solid #2c7be5 !important;
+    outline-offset: 2px !important;
+}
+/* Ensure radio inputs are properly associated and styled */
+.paynow-option-card input[type="radio"] {
+    position: absolute !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+.paynow-option-card input[type="radio"]:checked + label {
+    color: #2c7be5 !important;
+    font-weight: 600 !important;
 }
 
 .paynow-d-flex input[type='radio'] {
@@ -41,7 +75,9 @@
     text-decoration: none;
     visibility: visible;
 }
-
+.paynow_method {
+	margin-bottom: 10px;
+}
 .paynow-d-flex {
     display: flex;
     justify-content: space-between;
@@ -198,10 +234,16 @@ div.code {
     }
 }
 
-@media (max-width:569px) {
+/* Mobile responsive adjustments */
+@media (max-width: 569px) {
+    .paynow-option-card {
+        width: 100% !important;
+        margin-bottom: 10px !important;
+        text-align: center !important;
+    }
     .paynow-d-flex {
-        max-width: 100%;
-        flex-direction: column;
+        flex-direction: column !important;
+        align-items: stretch !important;
     }
 
     #paynow_custom_checkout_field .paynow-badge {

@@ -30,8 +30,8 @@ function woocommerce_paynow_init()
 {
 	load_plugin_textdomain('wc_paynow', false, trailingslashit(dirname(plugin_basename(__FILE__))));
 
-	/** Check if woocommerce is installed and available for use 
-	 * 
+	/** Check if woocommerce is installed and available for use
+	 *
 	 * @since 1.0.0
 	 */
 	$active_plugins = apply_filters('active_plugins', get_option('active_plugins', array()));
@@ -53,9 +53,9 @@ function woocommerce_paynow_init()
 	{
 
 
-		/** 
+		/**
 		 * Get Paynow instance
-		 * 
+		 *
 		 * @var Singleton The reference the *Singleton* instance of this class
 		 */
 		private static $instance;
@@ -88,7 +88,7 @@ function woocommerce_paynow_init()
 
 		public function init()
 		{
-			if (WC_Blocks_Utils::has_block_in_page(wc_get_page_id('checkout'), 'woocommerce/checkout')) {
+			if (class_exists('WC_Blocks_Utils') && WC_Blocks_Utils::has_block_in_page(wc_get_page_id('checkout'), 'woocommerce/checkout')) {
 				include_once __DIR__ . '/includes/class-wc-gateway-paynow.php';
 			} else {
 				include_once __DIR__ . '/includes/class-wc-gateway-non-block-paynow.php';
@@ -123,12 +123,12 @@ function woocommerce_paynow_init()
 			add_filter('woocommerce_payment_gateways', array($this, 'woocommerce_paynow_add_gateway'));
 			add_action('woocommerce_thankyou', array($this, 'order_cancelled_redirect'), 10, 1);
 
-			if (WC_Blocks_Utils::has_block_in_page(wc_get_page_id('checkout'), 'woocommerce/checkout')) {
+			if (class_exists('WC_Blocks_Utils') && WC_Blocks_Utils::has_block_in_page(wc_get_page_id('checkout'), 'woocommerce/checkout')) {
 				add_action('woocommerce_blocks_loaded', array($this, 'woocommerce_gateway_paynow_woocommerce_block_support'));
 			}
 
 			add_action('rest_api_init', function () {
-				register_rest_route('wc-paynow-express/v1', '/order/(?P<id>\d+)', array(
+				register_rest_route('paynow/v1', '/order/(?P<id>\d+)', array(
 					'methods' => 'POST',
 					'callback' => array(new WC_Gateway_Paynow(), 'wc_express_check_status'),
 					'permission_callback' => '__return_true',

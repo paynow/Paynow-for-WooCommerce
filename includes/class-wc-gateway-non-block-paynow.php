@@ -456,7 +456,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				exit;
 			}
 
-			$paynow_payment_method =  $order->get_meta('_paynow_payment_method');
+			$paynow_payment_method =  $order->get_meta('_paynow_payment_method') == "" ?'paynow': $order->get_meta('_paynow_payment_method');
 
 			$api_request_url =  WC()->api_request_url($this->callback);
 			$listener_url = add_query_arg('order_id', $order_id, $api_request_url);
@@ -586,7 +586,8 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 						update_post_meta($order_id, '_wc_paynow_payment_meta', $payment_meta);
 					}
 				} elseif (strtolower($msg['status']) == strtolower(PS_CANCELLED)) {
-					wp_mail('adrian@webdevworld.com', 'WC Test', 'This is a cancelled test.');
+
+					$error =  'Transaction cancelled on Paynow. ';
 				} else {
 					//unknown status
 					$error =  'Invalid status in from Paynow, cannot continue. ' . $msg['error'];
@@ -641,6 +642,229 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 		?>
 
+			<style>
+			.paynow-d-flex label {
+				margin-right: 23px;
+				margin-left: 5px;
+				font-size: 16px !important;
+				position: relative;
+				top: -3px;
+			}
+
+			.paynow-d-flex input[type='radio'] {
+				height: 16px;
+				width: 16px;
+			}
+
+			#paynow_custom_checkout_field input[type='tel'],
+			#paynow_custom_checkout_field input[type='email'] {
+				width: 70%;
+				font-size: 0.833em;
+				padding: 14px 15px;
+				border: 0;
+				background-color: #eee;
+				color: #666;
+				border-radius: 3px;
+				box-sizing: border-box;
+				margin: 0;
+				outline: 0;
+				line-height: normal;
+			}
+
+			.woocommerce-checkout .checkout.woocommerce-checkout #customer_details .col-1 .woocommerce-billing-fields__field-wrapper .form-row input {
+				background-color: #eee !important;
+			}
+
+			#paynow_custom_checkout_field .required {
+				color: red;
+				font-weight: 700;
+				border: 0 !important;
+				text-decoration: none;
+				visibility: visible;
+			}
+
+			.paynow-d-flex {
+				display: flex;
+				justify-content: space-between;
+				max-width: 75%;
+				flex-wrap: wrap;
+				padding-left: 15px;
+			}
+
+			#ecocash_mobile_number_field {
+				margin-bottom: 5px;
+			}
+
+			.paynow-badges {
+				margin-left: 20px;
+			}
+
+			#paynow_custom_checkout_field .paynow-badge {
+				max-width: 60px;
+			}
+
+			div.instruction {
+				padding: .3em;
+				font-size: 1.2em;
+			}
+
+			div.bubble {
+				border-radius: .2em 1em;
+				display: inline-block;
+				/* *display: inline; */
+				color: white;
+				background: #185ff9;
+				position: relative;
+				font-weight: bold;
+				letter-spacing: 1px;
+			}
+
+			div.code {
+				padding: .5em;
+				line-height: .5em;
+				border-radius: 1em;
+				font-size: 2em;
+				top: 1em;
+				left: -0.6em;
+			}
+
+			.paynow-loader,
+			.paynow-loader:after {
+				border-radius: 50%;
+				width: 6em;
+				height: 6em;
+			}
+
+			.paynow-loader {
+				margin: 30px auto;
+				font-size: 10px;
+				position: relative;
+				text-indent: -9999em;
+				border-top: 1.1em solid rgba(25, 140, 255, 0.2);
+				border-right: 1.1em solid rgba(25, 140, 255, 0.2);
+				border-bottom: 1.1em solid rgba(25, 140, 255, 0.2);
+				border-left: 1.1em solid #198cff;
+				-webkit-transform: translateZ(0);
+				-ms-transform: translateZ(0);
+				transform: translateZ(0);
+				-webkit-animation: load8 1.1s infinite linear;
+				animation: load8 1.1s infinite linear;
+			}
+
+			@-webkit-keyframes load8 {
+				0% {
+					-webkit-transform: rotate(0deg);
+					transform: rotate(0deg);
+				}
+
+				100% {
+					-webkit-transform: rotate(360deg);
+					transform: rotate(360deg);
+				}
+			}
+
+			@keyframes load8 {
+				0% {
+					-webkit-transform: rotate(0deg);
+					transform: rotate(0deg);
+				}
+
+				100% {
+					-webkit-transform: rotate(360deg);
+					transform: rotate(360deg);
+				}
+			}
+
+			.innbucks_container {
+				position: absolute;
+				top: 85%;
+				left: 50%;
+				-ms-transform: translateX(-50%) translateY(-65%);
+				-webkit-transform: translate(-50%, -50%);
+				transform: translate(-50%, -50%);
+				width: 80%;
+			}
+
+			#paynow_email {
+				display: none;
+				margin-bottom: 15px;
+			}
+
+			@media (max-width:639px) {
+				.innbucks_container {
+					top: 0%;
+					opacity: 1;
+					background-color: #ffffff;
+					transform: translate(-50%, 0%);
+					width: 100vw;
+				}
+
+			}
+
+			.wd-loader-wrapper {
+				position: fixed;
+				width: 100vw;
+				height: 100vh;
+				background: rgba(255, 255, 255, .85);
+				z-index: 999999;
+				top: 0;
+				left: 0;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				text-align: center;
+			}
+
+			.wd-loader-wrapper .paynow-express-loader {
+				border: 16px solid #f3f3f3;
+				/* Light grey */
+				border-top: 16px solid #3498db;
+				/* Blue */
+				border-radius: 50%;
+				width: 120px;
+				height: 120px;
+				animation: spin 2s linear infinite;
+				margin: 0 auto;
+				margin-bottom: 2rem;
+			}
+
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
+
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+
+			@media (max-width:569px) {
+				.paynow-d-flex {
+					max-width: 100%;
+					flex-direction: column;
+				}
+
+				#paynow_custom_checkout_field .paynow-badge {
+					max-width: 40px;
+
+				}
+
+				#paynow_custom_checkout_field .paynow-badges {
+					margin-left: 25px;
+				}
+
+				#paynow_custom_checkout_field input[type='tel'],
+				#paynow_custom_checkout_field input[type='email'] {
+					width: 100%;
+				}
+
+				.paynow-d-flex div {
+					margin-top: 15px;
+				}
+			}
+		</style>
+
 
 			<script type="text/javascript">
 
@@ -649,7 +873,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 			<section style="width: 100%; height: 100%; overflow: hidden; margin-top:150px">
 				<div class="innbucks_container">
-					<div class="loader white"></div>
+					<div class="paynow-loader white"></div>
 					<div id="loading-info" style="text-align: center; color: #2d3040; font-family: Arial, sans-serif; font-size: 18px;">
 						Waiting for InnBucks payment from innbucks...
 						<p style="font-size: 10px; font-weight: normal">
@@ -742,9 +966,9 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 							'Content-Type': 'application/x-www-form-urlencoded',
 						},
 						body: new URLSearchParams({
-							order_id: '<?php echo $order_id; ?>',
-							_wpnonce: '<?php echo wp_create_nonce('paynow_poll_' . $order_id); ?>'
-						})
+												order_id: '<?php echo $order_id; ?>',
+												_wpnonce: '<?php echo wp_create_nonce('wp_rest'); ?>'
+											})
 					})
 						.then(function(res) { return res.json(); })
 						.then(function(data) {
@@ -869,7 +1093,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 					update_post_meta($order_id, '_wc_paynow_payment_meta', $payment_meta);
 
 					if (trim(strtolower($msg['status'])) == PS_CANCELLED) {
-						$order->update_status('cancelled',  __('Payment cancelled on Paynow.', 'woothemes'));
+						$order->update_status('failed',  __('Payment cancelled on Paynow.', 'woothemes'));
 						$order->save();
 						return;
 					} elseif (trim(strtolower($msg['status'])) == PS_FAILED) {

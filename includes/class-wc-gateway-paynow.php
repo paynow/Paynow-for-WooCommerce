@@ -580,7 +580,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				exit;
 			}
 
-			$paynow_payment_method =  $order->get_meta('_paynow_payment_method');
+			$paynow_payment_method =  $order->get_meta('_paynow_payment_method') == "" ?'paynow': $order->get_meta('_paynow_payment_method');
 
 			$api_request_url =  WC()->api_request_url($this->callback);
 			$listener_url = add_query_arg('order_id', $order_id, $api_request_url);
@@ -713,7 +713,8 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 						update_post_meta($order_id, '_wc_paynow_payment_meta', $payment_meta);
 					}
 				} elseif (strtolower($msg['status']) == strtolower(PS_CANCELLED)) {
-					wp_mail('adrian@webdevworld.com,eliphas@paynow.co,zw', 'WC Test', 'This is a cancelled test.');
+					//cancelled
+					$error =  'Transaction cancelled. ' . $msg['error'];
 				} else {
 					//unknown status
 					$error =  'Invalid status in from Paynow, cannot continue. ' . $msg['error'];
@@ -845,14 +846,14 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				left: -0.6em;
 			}
 
-			.loader,
-			.loader:after {
+			.paynow-loader,
+			.paynow-loader:after {
 				border-radius: 50%;
 				width: 6em;
 				height: 6em;
 			}
 
-			.loader {
+			.paynow-loader {
 				margin: 30px auto;
 				font-size: 10px;
 				position: relative;
@@ -997,7 +998,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 			<section style="width: 100%; height: 100%; overflow: hidden; margin-top:150px">
 				<div class="innbucks_container">
-					<div class="loader white"></div>
+					<div class="paynow-loader white"></div>
 					<div id="loading-info" style="text-align: center; color: #2d3040; font-family: Arial, sans-serif; font-size: 18px;">
 						Waiting for InnBucks payment from innbucks...
 						<p style="font-size: 10px; font-weight: normal">
@@ -1221,7 +1222,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 					update_post_meta($order_id, '_wc_paynow_payment_meta', $payment_meta);
 
 					if (trim(strtolower($msg['status'])) == PS_CANCELLED) {
-						$order->update_status('cancelled',  __('Payment cancelled on Paynow.', 'woothemes'));
+						$order->update_status('failed',  __('Payment failed on Paynow.', 'woothemes'));
 						$order->save();
 						return new WP_REST_Response(["message" => "Saved Succesfully"], 200);
 					} elseif (trim(strtolower($msg['status'])) == PS_FAILED) {

@@ -16,27 +16,27 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 {
 
 
-		public $version = WC_PAYNOW_VERSION;
-		public $id;
-		public $method_title;
-		public $method_description;
-		public $icon;
-		public $has_fields;
-		public $callback;
-		public $available_countries;
-		public $available_currencies;
-		public $merchant_id;
-		public $merchant_key;
-		public $forex_merchant_id;
-		public $forex_merchant_key;
-		public $initiate_transaction_url;
-		public $initiate_remote_transaction_url;
-		public $title;
-		public $description;
-		public $response_url;
-		public $plugin_url;
-		public $supports;
-		public $instructions;
+	public $version = WC_PAYNOW_VERSION;
+	public $id;
+	public $method_title;
+	public $method_description;
+	public $icon;
+	public $has_fields;
+	public $callback;
+	public $available_countries;
+	public $available_currencies;
+	public $merchant_id;
+	public $merchant_key;
+	public $forex_merchant_id;
+	public $forex_merchant_key;
+	public $initiate_transaction_url;
+	public $initiate_remote_transaction_url;
+	public $title;
+	public $description;
+	public $response_url;
+	public $plugin_url;
+	public $supports;
+	public $instructions;
 
 	public function __construct()
 	{
@@ -366,7 +366,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 			</p>
 
 		</div>
-		<?php
+	<?php
 
 
 	}
@@ -393,35 +393,35 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	{
 		$chosen_payment_method = WC()->session->get('chosen_payment_method');
 		if ($chosen_payment_method === 'paynow') {
-		if (empty($_POST['paynow_payment_method'])) {
+			if (empty($_POST['paynow_payment_method'])) {
 
-			$errors->add('paynow_payment_method', __('Please select paynow payment channel', 'woocommerce'));
-			return;
-		}
-
-
-		if ('paynow' != $_POST['paynow_payment_method']) {
-			if (empty($_POST['ecocash_mobile_number'])) {
-
-				$errors->add('ecocash_mobile_number', __('Please enter payment phone No.', 'woocommerce'));
-			} else {
-				$method =  (new WC_Paynow_Helper())->checkNetwork($_POST['ecocash_mobile_number']);
-				if ('unknown' == $method) {
-					$errors->add('ecocash_mobile_number', __('Please enter a valid phone number', 'woocommerce'));
-				}
-			}
-		} else {
-			if (empty($_POST['paynow_auth_email'])) {
-
-				$errors->add('paynow_auth_email', __('Please enter paynow email address', 'woocommerce'));
+				$errors->add('paynow_payment_method', __('Please select paynow payment channel', 'woocommerce'));
 				return;
 			}
-			if (!is_email($_POST['paynow_auth_email'])) {
 
-				$errors->add('paynow_auth_email', __('Please enter a valid paynow email address', 'woocommerce'));
+
+			if ('paynow' != $_POST['paynow_payment_method']) {
+				if (empty($_POST['ecocash_mobile_number'])) {
+
+					$errors->add('ecocash_mobile_number', __('Please enter payment phone No.', 'woocommerce'));
+				} else {
+					$method =  (new WC_Paynow_Helper())->checkNetwork($_POST['ecocash_mobile_number']);
+					if ('unknown' == $method) {
+						$errors->add('ecocash_mobile_number', __('Please enter a valid phone number', 'woocommerce'));
+					}
+				}
+			} else {
+				if (empty($_POST['paynow_auth_email'])) {
+
+					$errors->add('paynow_auth_email', __('Please enter paynow email address', 'woocommerce'));
+					return;
+				}
+				if (!is_email($_POST['paynow_auth_email'])) {
+
+					$errors->add('paynow_auth_email', __('Please enter a valid paynow email address', 'woocommerce'));
+				}
 			}
 		}
-	}
 	}
 	/**
 	 * Add Payment fields for Paynow
@@ -456,7 +456,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				exit;
 			}
 
-			$paynow_payment_method =  $order->get_meta('_paynow_payment_method') == "" ?'paynow': $order->get_meta('_paynow_payment_method');
+			$paynow_payment_method =  $order->get_meta('_paynow_payment_method') == "" ? 'paynow' : $order->get_meta('_paynow_payment_method');
 
 			$api_request_url =  WC()->api_request_url($this->callback);
 			$listener_url = add_query_arg('order_id', $order_id, $api_request_url);
@@ -630,19 +630,10 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		// Save the order to persist the custom data
 		$order->save();
 
+	?>
 
-		if (array_key_exists("authorizationcode", $body)) {
-			$innbuck_url = "schinn.wbpycode://innbucks.co.zw?pymInnCode=";
-			$qr_link = "https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=";
 
-			$body["expires_at"] =  $body['authorizationexpires'];
-			$body["url"] = $innbuck_url . $body["authorizationcode"];
-			$body["qr_link"] = $qr_link . $body["authorizationcode"];
-			$body["auth_code"] = $body["authorizationcode"];
-
-		?>
-
-			<style>
+		<style>
 			.paynow-d-flex label {
 				margin-right: 23px;
 				margin-left: 5px;
@@ -864,6 +855,18 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				}
 			}
 		</style>
+		<?php
+		if (array_key_exists("authorizationcode", $body)) {
+			$innbuck_url = "schinn.wbpycode://innbucks.co.zw?pymInnCode=";
+			$qr_link = "https://qr.pay.co.zw/qr?pixelsize=10&data=";
+
+			$body["expires_at"] =  $body['authorizationexpires'];
+			$body["url"] = $innbuck_url . $body["authorizationcode"];
+			$body["qr_link"] = $qr_link . $body["authorizationcode"];
+			$body["auth_code"] = $body["authorizationcode"];
+
+		?>
+
 
 
 			<script type="text/javascript">
@@ -926,7 +929,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 						<div id="status-message" style="font-size: 14px; color: #6c757d;">Transaction status: <span id="status">created</span></div>
 						<div id="error-message" style="display: none; color: #dc3545; font-size: 14px; margin-top: 10px;"></div>
 					</div>
-					<div style="font-size: 16px; font-weight: normal; margin-top: 50px;">
+					<!-- <div style="font-size: 16px; font-weight: normal; margin-top: 50px;">
 						<div class="dial-number">
 							If you don't get a prompt on your handset
 							<div style="margin-bottom: 3em;">
@@ -935,13 +938,11 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 							</div>
 						</div>
 
-					</div>
+					</div> -->
 
 				</div>
 			</div>
-			<style>
 
-			</style>
 
 		<?php
 
@@ -961,16 +962,18 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 					};
 
 					fetch('/wp-json/paynow/v1/order/<?php echo $order_id; ?>', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/x-www-form-urlencoded',
-						},
-						body: new URLSearchParams({
-												order_id: '<?php echo $order_id; ?>',
-												_wpnonce: '<?php echo wp_create_nonce('wp_rest'); ?>'
-											})
-					})
-						.then(function(res) { return res.json(); })
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/x-www-form-urlencoded',
+							},
+							body: new URLSearchParams({
+								order_id: '<?php echo $order_id; ?>',
+								_wpnonce: '<?php echo wp_create_nonce('wp_rest'); ?>'
+							})
+						})
+						.then(function(res) {
+							return res.json();
+						})
 						.then(function(data) {
 							try {
 								if (data && typeof data === 'object' && data.hasOwnProperty('complete')) {
@@ -1005,6 +1008,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		</script>
 
 <?php
+
 		exit;
 	}
 	/**
@@ -1093,7 +1097,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 					update_post_meta($order_id, '_wc_paynow_payment_meta', $payment_meta);
 
 					if (trim(strtolower($msg['status'])) == PS_CANCELLED) {
-						$order->update_status('failed',  __('Payment cancelled on Paynow.', 'woothemes'));
+						$order->update_status('cancelled',  __('Payment cancelled on Paynow.', 'woothemes'));
 						$order->save();
 						return;
 					} elseif (trim(strtolower($msg['status'])) == PS_FAILED) {
@@ -1173,9 +1177,9 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 						);
 					} else if (strtolower($msg["status"]) == PS_CANCELLED || strtolower($msg["status"]) == PS_FAILED) {
 						$data = array(
-							'complete' => false,
+							'complete' => true,
 							'status' => $msg["status"],
-							'url' => $order->get_checkout_payment_url(false)
+							'url' => $order->get_checkout_payment_url()
 						);
 					}
 				}
@@ -1187,6 +1191,6 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 	public function paynow_enqueue_script()
 	{
-		wp_enqueue_script('my-js',  $this->plugin_url() . '/assets/js/paynow-js.js', array('jquery'),$this->version, true);
+		wp_enqueue_script('my-js',  $this->plugin_url() . '/assets/js/paynow-js.js', array('jquery'), $this->version, true);
 	}
 } // End Class

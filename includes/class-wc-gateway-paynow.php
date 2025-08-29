@@ -1,4 +1,3 @@
-
 <?php
 
 /**
@@ -580,7 +579,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				exit;
 			}
 
-			$paynow_payment_method =  $order->get_meta('_paynow_payment_method') == "" ?'paynow': $order->get_meta('_paynow_payment_method');
+			$paynow_payment_method =  $order->get_meta('_paynow_payment_method') == "" ? 'paynow' : $order->get_meta('_paynow_payment_method');
 
 			$api_request_url =  WC()->api_request_url($this->callback);
 			$listener_url = add_query_arg('order_id', $order_id, $api_request_url);
@@ -1086,16 +1085,18 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 					};
 
 					fetch('/wp-json/paynow/v1/order/<?php echo $order_id; ?>', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/x-www-form-urlencoded',
-						},
-												body: new URLSearchParams({
-												order_id: '<?php echo $order_id; ?>',
-												_wpnonce: '<?php echo wp_create_nonce('wp_rest'); ?>'
-											})
-					})
-						.then(function(res) { return res.json(); })
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/x-www-form-urlencoded',
+							},
+							body: new URLSearchParams({
+								order_id: '<?php echo $order_id; ?>',
+								_wpnonce: '<?php echo wp_create_nonce('wp_rest'); ?>'
+							})
+						})
+						.then(function(res) {
+							return res.json();
+						})
 						.then(function(data) {
 							try {
 								if (data && typeof data === 'object' && data.hasOwnProperty('complete')) {
@@ -1171,7 +1172,6 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	 */
 	public function paynow_checkout_return_handler()
 	{
-		error_log("Paynow Checkout Return Handler called"." - " . print_r($_POST, true));
 		global $woocommerce;
 
 		// Check the request method is POST
@@ -1222,7 +1222,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 					update_post_meta($order_id, '_wc_paynow_payment_meta', $payment_meta);
 
 					if (trim(strtolower($msg['status'])) == PS_CANCELLED) {
-						$order->update_status('failed',  __('Payment failed on Paynow.', 'woothemes'));
+						$order->update_status('cancelled',  __('Payment cancelled on Paynow.', 'woothemes'));
 						$order->save();
 						return new WP_REST_Response(["message" => "Saved Succesfully"], 200);
 					} elseif (trim(strtolower($msg['status'])) == PS_FAILED) {

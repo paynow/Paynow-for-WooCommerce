@@ -137,7 +137,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		$this->available_countries = array('ZW');
 
 		// Setup available currency codes.
-		$this->available_currencies = array('USD', 'ZIG'); // nostro / rtgs ?
+		$this->available_currencies = array('USD', 'ZIG'); // USD / ZIG ?
 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -184,7 +184,6 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 
 		wp_register_style('paynow-style', $this->plugin_url() . '/assets/css/paynow-style.css');
-		add_action('wp_enqueue_scripts',  array($this, 'paynow_enqueue_script'));
 
 		add_action('woocommerce_receipt_paynow', array($this, 'receipt_page'));
 
@@ -607,7 +606,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 
 
 			$ConfirmUrl =  $listener_url;
-			$ReturnUrl = $return_url;
+			$ReturnUrl = filter_var($return_url, FILTER_VALIDATE_URL) ? $return_url : home_url($return_url);
 			$Reference = 'Order Number: ' . $order->get_order_number();
 			$Amount = $order->get_total();
 			$AdditionalInfo = '';
@@ -729,6 +728,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 				wp_redirect($checkout_url);
 				exit;
 			} else {
+				// redirect user to paynow
 				// redirect user to paynow
 
 				if ('paynow' == $paynow_payment_method) {
@@ -1139,30 +1139,33 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	 * @since 1.0.0
 	 */
 
-	public function log($message, $close = false)
-	{
+	 public function log($message, $close = false)
+	 {
+		 global $wp_filesystem;
 
-		static $fh = 0;
+		 if (empty($wp_filesystem)) {
+			 require_once ABSPATH . '/wp-admin/includes/file.php';
+			 WP_Filesystem();
+		 }
 
-		if ($close) {
-			@fclose($fh);
-		} else {
-			// If file doesn't exist, create it
-			if (!$fh) {
-				$pathinfo = pathinfo(__FILE__);
-				$dir = str_replace('/includes', '/logs', $pathinfo['dirname']);
-				$fh = @fopen($dir . '/paynow.log', 'a+');
-			}
+		 $upload_dir = wp_upload_dir();
+		 $log_dir = trailingslashit($upload_dir['basedir']) . 'paynow-logs';
 
-			// If file was successfully created
-			if ($fh) {
-				$line = $message . "\n";
+		 if (!file_exists($log_dir)) {
+			 wp_mkdir_p($log_dir);
+		 }
 
-				fwrite($fh, $line);
-			}
-		}
-	} // End log()
+		 $log_file = trailingslashit($log_dir) . 'paynow.log';
 
+		 $existing_log = '';
+		 if ($wp_filesystem->exists($log_file)) {
+			 $existing_log = $wp_filesystem->get_contents($log_file);
+		 }
+
+		 $new_entry = date('Y-m-d H:i:s') . " - " . $message . "\n";
+
+		 $wp_filesystem->put_contents($log_file, $existing_log . $new_entry, FS_CHMOD_FILE);
+	 }
 
 	/**
 	 * Process notify from Paynow

@@ -6,6 +6,7 @@
  *	Description: A payment gateway for Zimbabwean payment system, Paynow for Woocommerce.
  *	Author: Paynow Zimbabwe
  *	Version: 1.3.4
+ *	Version: 1.3.4
  *	Author URI: https://www.paynow.co.zw/
  *	Requires at least: 3.5
  *	Tested up to: 6.8

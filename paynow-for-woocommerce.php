@@ -6,12 +6,10 @@
  *	Description: A payment gateway for Zimbabwean payment system, Paynow for Woocommerce.
  *	Author: Paynow Zimbabwe
  *	Version: 1.3.4
+ *	Version: 1.3.4
  *	Author URI: https://www.paynow.co.zw/
  *	Requires at least: 3.5
- *	Tested up to: 6.7
- * 	License: GPLv2 or later
- * 	License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * 	Text Domain: paynow
+ *	Tested up to: 6.8
  */
 
 add_action('plugins_loaded', 'woocommerce_paynow_init');
@@ -76,13 +74,9 @@ function woocommerce_paynow_init()
 			return self::$instance;
 		}
 
-		public function __clone()
-		{
-		}
+		public function __clone() {}
 
-		public function __wakeup()
-		{
-		}
+		public function __wakeup() {}
 
 		public function __construct()
 		{
@@ -91,7 +85,11 @@ function woocommerce_paynow_init()
 
 		public function init()
 		{
-			include_once __DIR__ . '/includes/class-wc-gateway-paynow.php';
+			if (class_exists('WC_Blocks_Utils') && WC_Blocks_Utils::has_block_in_page(wc_get_page_id('checkout'), 'woocommerce/checkout')) {
+				include_once __DIR__ . '/includes/class-wc-gateway-paynow.php';
+			} else {
+				include_once __DIR__ . '/includes/class-wc-gateway-non-block-paynow.php';
+			}
 			include_once __DIR__ . '/includes/class-wc-gateway-paynow-helper.php';
 			include_once __DIR__ . '/includes/constants.php';
 
@@ -122,12 +120,12 @@ function woocommerce_paynow_init()
 			add_filter('woocommerce_payment_gateways', array($this, 'woocommerce_paynow_add_gateway'));
 			add_action('woocommerce_thankyou', array($this, 'order_cancelled_redirect'), 10, 1);
 
-			if (WC_Blocks_Utils::has_block_in_page(wc_get_page_id('checkout'), 'woocommerce/checkout')) {
+			if (class_exists('WC_Blocks_Utils') && WC_Blocks_Utils::has_block_in_page(wc_get_page_id('checkout'), 'woocommerce/checkout')) {
 				add_action('woocommerce_blocks_loaded', array($this, 'woocommerce_gateway_paynow_woocommerce_block_support'));
 			}
 
 			add_action('rest_api_init', function () {
-				register_rest_route('wc-paynow-express/v1', '/order/(?P<id>\d+)', array(
+				register_rest_route('paynow/v1', '/order/(?P<id>\d+)', array(
 					'methods' => 'POST',
 					'callback' => array(new WC_Gateway_Paynow(), 'wc_express_check_status'),
 					'permission_callback' => '__return_true',

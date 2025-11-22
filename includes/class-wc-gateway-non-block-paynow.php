@@ -267,7 +267,7 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 		?>
 			<div class="inline error">
 				<?php /* translators: %s: Disabled Gateway */ ?>
-				<p><strong><?php esc_html_e('Gateway Disabled', 'woothemes'); ?></strong> <?php sprintf(esc_html_e('Choose United States Dollar ($/USD) as your store currency in <a href="%s">Pricing Options</a> to enable the Paynow Gateway.', 'woocommerce'), esc_html_e(admin_url('?page=woocommerce&tab=catalog'))); ?></p>
+				<p><strong><?php esc_html_e('Gateway Disabled', 'woothemes'); ?></strong> <?php printf(esc_html__('Choose United States Dollar ($/USD) as your store currency in <a href="%s">Pricing Options</a> to enable the Paynow Gateway.', 'woocommerce'), esc_html_e(admin_url('?page=woocommerce&tab=catalog'))); ?></p>
 			</div>
 		<?php
 		} // End check currency

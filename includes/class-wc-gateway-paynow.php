@@ -14,12 +14,14 @@
 
 class WC_Gateway_Paynow extends WC_Payment_Gateway
 {
-
-
+	/**
+	 * Plugin version
+	 */
 	public $version = WC_PAYNOW_VERSION;
 
-
-
+	/**
+	 * Gateway ID
+	 */
 	public $id;
 
 	/**
@@ -93,24 +95,28 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	public $title;
 
 	/**
-	 * The title of the payment method shown on the checkout page.
+	 * The description of the payment method shown on the checkout page.
 	 */
 	public $description;
-
 
 	/**
 	 * URL where Paynow will send its response to.
 	 */
 	public $response_url;
 
-
+	/**
+	 * Plugin URL path.
+	 */
+	public $plugin_url = '';
 
 	/**
-	 * URL where Paynow will send its response to.
+	 * Supported features for this gateway.
 	 */
-	public $plugin_url;
-
 	public $supports;
+
+	/**
+	 * Payment instructions.
+	 */
 	public $instructions;
 
 	public function __construct($inital = true)

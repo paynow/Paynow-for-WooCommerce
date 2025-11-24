@@ -1,5 +1,9 @@
 *** Paynow Changelog***
 
+2025-11-24 - version 1.3.6
+* Fixed PHP 8.2+ deprecation warnings by adding explicit property declarations
+* Improved code compatibility with modern PHP versions
+
 2025-03-07 - version 1.3.4
 * Remove conditional support of WooCommerce none  blocks checkout( checkout shortcode)
 * Fix Enter valid return url paynow error. 

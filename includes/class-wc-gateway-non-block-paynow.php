@@ -14,29 +14,65 @@
 
 class WC_Gateway_Paynow extends WC_Payment_Gateway
 {
-
-
+	/**
+	 * Plugin version
+	 */
 	public $version = WC_PAYNOW_VERSION;
-	public $id;
-	public $method_title;
-	public $method_description;
-	public $icon;
-	public $has_fields;
+
+	/**
+	 * Callback URL used for the payment gateway.
+	 */
 	public $callback;
+
+	/**
+	 * Supported countries.
+	 */
 	public $available_countries;
+
+	/**
+	 * Supported currencies.
+	 */
 	public $available_currencies;
+
+	/**
+	 * Merchant ID for transactions.
+	 */
 	public $merchant_id;
+
+	/**
+	 * Merchant key for transactions.
+	 */
 	public $merchant_key;
+
+	/**
+	 * Forex Merchant ID for foreign currency transactions.
+	 */
 	public $forex_merchant_id;
+
+	/**
+	 * Forex Merchant Key for foreign currency transactions.
+	 */
 	public $forex_merchant_key;
+
+	/**
+	 * URL to initiate a transaction.
+	 */
 	public $initiate_transaction_url;
+
+	/**
+	 * URL to initiate a remote transaction.
+	 */
 	public $initiate_remote_transaction_url;
-	public $title;
-	public $description;
+
+	/**
+	 * URL where Paynow will send its response to.
+	 */
 	public $response_url;
+
+	/**
+	 * Plugin URL path.
+	 */
 	public $plugin_url;
-	public $supports;
-	public $instructions;
 
 	public function __construct()
 	{

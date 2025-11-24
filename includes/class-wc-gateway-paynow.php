@@ -20,31 +20,6 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	public $version = WC_PAYNOW_VERSION;
 
 	/**
-	 * Gateway ID
-	 */
-	public $id;
-
-	/**
-	 * The title of the payment method shown in the admin settings.
-	 */
-	public $method_title;
-
-	/**
-	 * Description of the payment method shown in the admin settings.
-	 */
-	public $method_description;
-
-	/**
-	 * URL to the icon to be used for this payment method in the checkout page.
-	 */
-	public $icon;
-
-	/**
-	 * Indicates if the payment gateway has fields on the checkout page.
-	 */
-	public $has_fields;
-
-	/**
 	 * Callback URL used for the payment gateway.
 	 */
 	public $callback;
@@ -90,16 +65,6 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	public $initiate_remote_transaction_url;
 
 	/**
-	 * The title of the payment method shown on the checkout page.
-	 */
-	public $title;
-
-	/**
-	 * The description of the payment method shown on the checkout page.
-	 */
-	public $description;
-
-	/**
 	 * URL where Paynow will send its response to.
 	 */
 	public $response_url;
@@ -108,16 +73,6 @@ class WC_Gateway_Paynow extends WC_Payment_Gateway
 	 * Plugin URL path.
 	 */
 	public $plugin_url = '';
-
-	/**
-	 * Supported features for this gateway.
-	 */
-	public $supports;
-
-	/**
-	 * Payment instructions.
-	 */
-	public $instructions;
 
 	public function __construct($inital = true)
 	{
